@@ -1,0 +1,26 @@
+﻿step,metric,unit,runs,mean,median,min,max,std_dev
+Open the application,First Contentful Paint,ms,10,842,840,818,877,17
+Open the application,Largest Contentful Paint,ms,10,1679,1672,1527,1855,88
+Open the application,Speed Index,ms,10,1332,1294,1210,1818,176
+Open the application,Total Blocking Time,ms,10,0,0,0,0,0
+Open the application,Cumulative Layout Shift,,10,0.002,0.002,0.001,0.002,0.000
+Open the application,Time to Interactive,ms,10,1109,1110,1081,1130,15
+Open the application,Performance score,0-100,10,92,92,90,93,1
+Navigate to the Tables tab,Total Blocking Time,ms,10,26,24,18,37,7
+Navigate to the Tables tab,Cumulative Layout Shift,,10,0.001,0.001,0.001,0.001,0.000
+Navigate to the Tables tab,Performance score,0-100,10,100,100,100,100,0
+Open first table product card,Total Blocking Time,ms,10,22,22,17,29,4
+Open first table product card,Cumulative Layout Shift,,10,0.001,0.001,0.001,0.001,0.000
+Open first table product card,Performance score,0-100,10,100,100,100,100,0
+Add the table to the cart,Total Blocking Time,ms,10,1,0,0,7,2
+Add the table to the cart,Cumulative Layout Shift,,10,0.000,0.000,0.000,0.000,0.000
+Add the table to the cart,Performance score,0-100,10,100,100,100,100,0
+Open the cart,Total Blocking Time,ms,10,15,14,10,26,5
+Open the cart,Cumulative Layout Shift,,10,0.001,0.001,0.001,0.001,0.000
+Open the cart,Performance score,0-100,10,100,100,100,100,0
+Click Place an order,Total Blocking Time,ms,10,13,12,9,23,4
+Click Place an order,Cumulative Layout Shift,,10,0.017,0.017,0.002,0.031,0.015
+Click Place an order,Performance score,0-100,10,100,100,100,100,0
+Fill required fields and place order,Total Blocking Time,ms,10,18,16,8,33,9
+Fill required fields and place order,Cumulative Layout Shift,,10,0.001,0.001,0.001,0.005,0.001
+Fill required fields and place order,Performance score,0-100,10,100,100,100,100,0

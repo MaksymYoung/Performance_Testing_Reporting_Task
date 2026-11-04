@@ -1,0 +1,3835 @@
+{
+  "apiVersion": "dashboard.grafana.app/v2",
+  "kind": "Dashboard",
+  "metadata": {
+    "name": "add6rtr",
+    "namespace": "default",
+    "uid": "1607a06b-8fcf-441e-9806-ef3ae30c1815",
+    "resourceVersion": "1793542079730986",
+    "generation": 68,
+    "creationTimestamp": "2026-10-21T21:22:32Z",
+    "labels": {
+      "grafana.app/deprecatedInternalID": "829893125877760"
+    },
+    "annotations": {
+      "grafana.app/createdBy": "user:cg0ngdbpgccu8d",
+      "grafana.app/saved-from-ui": "Grafana v13.2.3 (90ffed056f)",
+      "grafana.app/updatedBy": "user:cg0ngdbpgccu8d",
+      "grafana.app/updatedTimestamp": "2026-11-01T14:07:59Z"
+    }
+  },
+  "spec": {
+    "annotations": [
+      {
+        "kind": "AnnotationQuery",
+        "spec": {
+          "query": {
+            "kind": "DataQuery",
+            "group": "grafana",
+            "version": "v0",
+            "datasource": {
+              "name": "-- Grafana --"
+            },
+            "spec": {}
+          },
+          "enable": true,
+          "hide": true,
+          "iconColor": "rgba(0, 211, 255, 1)",
+          "name": "Annotations & Alerts",
+          "builtIn": true
+        }
+      }
+    ],
+    "cursorSync": "Crosshair",
+    "description": "This dashboard shows live load test metrics provided by JMeter stored in Influxdb2.",
+    "editable": true,
+    "elements": {
+      "panel-15": {
+        "kind": "Panel",
+        "spec": {
+          "id": 15,
+          "title": "Throughput per sampler",
+          "description": "",
+          "links": [],
+          "data": {
+            "kind": "QueryGroup",
+            "spec": {
+              "queries": [
+                {
+                  "kind": "PanelQuery",
+                  "spec": {
+                    "query": {
+                      "kind": "DataQuery",
+                      "group": "influxdb",
+                      "version": "v0",
+                      "datasource": {
+                        "name": "cg1m6i42v8e0wd"
+                      },
+                      "spec": {
+                        "query": "from(bucket: v.bucket)\r\n  |> range(start: v.timeRangeStart, stop: v.timeRangeStop)\r\n  |> filter(fn: (r) => r[\"_measurement\"] == \"jmeter\")\r\n  |> filter(fn: (r) => r[\"_field\"] == \"count\")\r\n  |> filter(fn: (r) => r[\"application\"] == \"${app}\")\r\n  |> filter(fn: (r) => r[\"testTitle\"] == \"${testTitle}\")\r\n  |> filter(fn: (r) => r[\"statut\"] == \"all\")\r\n  |> filter(\r\n        fn: (r) => if \"${type}\" == \"transaction\" then\r\n            r.transaction =~ /${transaction_mark}/\r\n        else\r\n            r.transaction !~ /${transaction_mark}/ and r.transaction != \"all\",\r\n  )\r\n  |> keep(columns: [\"_value\", \"_time\", \"transaction\"])\r\n  |> aggregateWindow(every: ${aggregation}s, fn: sum, createEmpty: false)\r\n  |> map(fn: (r) => ({ r with _value: float(v: r._value / float(v: ${aggregation}))}))"
+                      }
+                    },
+                    "refId": "A",
+                    "hidden": false
+                  }
+                }
+              ],
+              "transformations": [],
+              "queryOptions": {
+                "interval": "$send_interval"
+              }
+            }
+          },
+          "vizConfig": {
+            "kind": "VizConfig",
+            "group": "timeseries",
+            "version": "13.2.3",
+            "spec": {
+              "options": {
+                "legend": {
+                  "calcs": [
+                    "mean"
+                  ],
+                  "displayMode": "table",
+                  "placement": "right",
+                  "showLegend": true
+                },
+                "tooltip": {
+                  "hideZeros": false,
+                  "mode": "single",
+                  "sort": "none"
+                }
+              },
+              "fieldConfig": {
+                "defaults": {
+                  "unit": "reqps",
+                  "min": 0,
+                  "thresholds": {
+                    "mode": "absolute",
+                    "steps": [
+                      {
+                        "value": 0,
+                        "color": "green"
+                      },
+                      {
+                        "value": 80,
+                        "color": "red"
+                      }
+                    ]
+                  },
+                  "color": {
+                    "mode": "palette-classic"
+                  },
+                  "custom": {
+                    "axisBorderShow": false,
+                    "axisCenteredZero": false,
+                    "axisColorMode": "text",
+                    "axisLabel": "",
+                    "axisPlacement": "auto",
+                    "barAlignment": 0,
+                    "barWidthFactor": 0.6,
+                    "drawStyle": "line",
+                    "fillOpacity": 0,
+                    "gradientMode": "none",
+                    "hideFrom": {
+                      "legend": false,
+                      "tooltip": false,
+                      "viz": false
+                    },
+                    "insertNulls": false,
+                    "lineInterpolation": "linear",
+                    "lineStyle": {
+                      "fill": "solid"
+                    },
+                    "lineWidth": 1,
+                    "pointSize": 5,
+                    "scaleDistribution": {
+                      "type": "linear"
+                    },
+                    "showPoints": "auto",
+                    "showValues": false,
+                    "spanNulls": false,
+                    "stacking": {
+                      "group": "A",
+                      "mode": "none"
+                    },
+                    "thresholdsStyle": {
+                      "mode": "off"
+                    }
+                  }
+                },
+                "overrides": [
+                  {
+                    "matcher": {
+                      "id": "byName",
+                      "options": "Active threads"
+                    },
+                    "properties": [
+                      {
+                        "id": "custom.axisPlacement",
+                        "value": "right"
+                      },
+                      {
+                        "id": "unit",
+                        "value": "vu"
+                      }
+                    ]
+                  },
+                  {
+                    "matcher": {
+                      "id": "byName",
+                      "options": "Transations per second"
+                    },
+                    "properties": [
+                      {
+                        "id": "custom.axisPlacement",
+                        "value": "left"
+                      },
+                      {
+                        "id": "unit",
+                        "value": "reqps"
+                      }
+                    ]
+                  },
+                  {
+                    "matcher": {
+                      "id": "byName",
+                      "scope": "series",
+                      "options": "S01_Browse_And_Checkout_T01_OpenApplication"
+                    },
+                    "properties": [
+                      {
+                        "id": "displayName",
+                        "value": "001_HomePage"
+                      }
+                    ]
+                  },
+                  {
+                    "matcher": {
+                      "id": "byName",
+                      "scope": "series",
+                      "options": "S01_Browse_And_Checkout_T02_NavigateToTables"
+                    },
+                    "properties": [
+                      {
+                        "id": "displayName",
+                        "value": "002_NavigateToTables"
+                      }
+                    ]
+                  },
+                  {
+                    "matcher": {
+                      "id": "byName",
+                      "scope": "series",
+                      "options": "S01_Browse_And_Checkout_T03_OpenTableProductCard"
+                    },
+                    "properties": [
+                      {
+                        "id": "displayName",
+                        "value": "003_Tables"
+                      }
+                    ]
+                  },
+                  {
+                    "matcher": {
+                      "id": "byName",
+                      "scope": "series",
+                      "options": "S01_Browse_And_Checkout_T04_AddTableToCart"
+                    },
+                    "properties": [
+                      {
+                        "id": "displayName",
+                        "value": "004_Tables_addToCart"
+                      }
+                    ]
+                  },
+                  {
+                    "matcher": {
+                      "id": "byName",
+                      "scope": "series",
+                      "options": "S01_Browse_And_Checkout_T05_NavigateToChairs"
+                    },
+                    "properties": [
+                      {
+                        "id": "displayName",
+                        "value": "005_NavigateToChairs"
+                      }
+                    ]
+                  },
+                  {
+                    "matcher": {
+                      "id": "byName",
+                      "scope": "series",
+                      "options": "S01_Browse_And_Checkout_T06_OpenChairProductCard"
+                    },
+                    "properties": [
+                      {
+                        "id": "displayName",
+                        "value": "006_Chairs"
+                      }
+                    ]
+                  },
+                  {
+                    "matcher": {
+                      "id": "byName",
+                      "scope": "series",
+                      "options": "S01_Browse_And_Checkout_T07_AddChairToCart"
+                    },
+                    "properties": [
+                      {
+                        "id": "displayName",
+                        "value": "007_Chairs_addToCart"
+                      }
+                    ]
+                  },
+                  {
+                    "matcher": {
+                      "id": "byName",
+                      "scope": "series",
+                      "options": "S01_Browse_And_Checkout_T08_OpenCart"
+                    },
+                    "properties": [
+                      {
+                        "id": "displayName",
+                        "value": "008_Cart"
+                      }
+                    ]
+                  },
+                  {
+                    "matcher": {
+                      "id": "byName",
+                      "scope": "series",
+                      "options": "S01_Browse_And_Checkout_T09_OpenCheckout"
+                    },
+                    "properties": [
+                      {
+                        "id": "displayName",
+                        "value": "009_Checkout"
+                      }
+                    ]
+                  },
+                  {
+                    "matcher": {
+                      "id": "byName",
+                      "scope": "series",
+                      "options": "S01_Browse_And_Checkout_T10_LoadStateDropdown"
+                    },
+                    "properties": [
+                      {
+                        "id": "displayName",
+                        "value": "010_Choosing_Country"
+                      }
+                    ]
+                  },
+                  {
+                    "matcher": {
+                      "id": "byName",
+                      "scope": "series",
+                      "options": "S01_Browse_And_Checkout_T11_SubmitOrder"
+                    },
+                    "properties": [
+                      {
+                        "id": "displayName",
+                        "value": "011_Place_Order"
+                      }
+                    ]
+                  }
+                ]
+              }
+            }
+          }
+        }
+      },
+      "panel-2": {
+        "kind": "Panel",
+        "spec": {
+          "id": 2,
+          "title": "Stats (${type})",
+          "description": "",
+          "links": [],
+          "data": {
+            "kind": "QueryGroup",
+            "spec": {
+              "queries": [
+                {
+                  "kind": "PanelQuery",
+                  "spec": {
+                    "query": {
+                      "kind": "DataQuery",
+                      "group": "influxdb",
+                      "version": "v0",
+                      "datasource": {
+                        "name": "cg1m6i42v8e0wd"
+                      },
+                      "spec": {
+                        "query": "from(bucket: v.bucket)\r\n  |> range(start: v.timeRangeStart, stop: v.timeRangeStop)\r\n  |> filter(fn: (r) => r[\"_measurement\"] == \"jmeter\")\r\n  |> filter(fn: (r) => r[\"application\"] == \"${app}\")\r\n  |> filter(fn: (r) => r[\"_field\"] == \"pct50.0\")\r\n  |> filter(fn: (r) => r[\"testTitle\"] == \"${testTitle}\")\r\n  |> filter(fn: (r) => r[\"statut\"] == \"all\")\r\n  |> filter(\r\n        fn: (r) => if \"${type}\" == \"transaction\" then\r\n            r.transaction =~ /${transaction_mark}/\r\n        else\r\n            r.transaction !~ /${transaction_mark}/ and r.transaction != \"all\",\r\n  )\r\n  |> group(columns: [\"_field\"])\r\n  |> keep(columns: [\"_value\", \"_field\"])\r\n  |> median()\r\n  |> set(key: \"_field\", value: \"Median\")"
+                      }
+                    },
+                    "refId": "A",
+                    "hidden": false
+                  }
+                },
+                {
+                  "kind": "PanelQuery",
+                  "spec": {
+                    "query": {
+                      "kind": "DataQuery",
+                      "group": "influxdb",
+                      "version": "v0",
+                      "datasource": {
+                        "name": "cg1m6i42v8e0wd"
+                      },
+                      "spec": {
+                        "query": "from(bucket: v.bucket)\r\n  |> range(start: v.timeRangeStart, stop: v.timeRangeStop)\r\n  |> filter(fn: (r) => r[\"_measurement\"] == \"jmeter\")\r\n  |> filter(fn: (r) => r[\"application\"] == \"${app}\")\r\n  |> filter(fn: (r) => r[\"_field\"] == \"pct75.0\")\r\n  |> filter(fn: (r) => r[\"testTitle\"] == \"${testTitle}\")\r\n  |> filter(fn: (r) => r[\"statut\"] == \"all\")\r\n  |> filter(\r\n        fn: (r) => if \"${type}\" == \"transaction\" then\r\n            r.transaction =~ /${transaction_mark}/\r\n        else\r\n            r.transaction !~ /${transaction_mark}/ and r.transaction != \"all\",\r\n  )\r\n  |> group(columns: [\"_field\"])\r\n  |> keep(columns: [\"_value\", \"_field\"])\r\n  |> median()\r\n  |> set(key: \"_field\", value: \"pct75\")"
+                      }
+                    },
+                    "refId": "B",
+                    "hidden": false
+                  }
+                },
+                {
+                  "kind": "PanelQuery",
+                  "spec": {
+                    "query": {
+                      "kind": "DataQuery",
+                      "group": "influxdb",
+                      "version": "v0",
+                      "datasource": {
+                        "name": "cg1m6i42v8e0wd"
+                      },
+                      "spec": {
+                        "query": "from(bucket: v.bucket)\r\n  |> range(start: v.timeRangeStart, stop: v.timeRangeStop)\r\n  |> filter(fn: (r) => r[\"_measurement\"] == \"jmeter\")\r\n  |> filter(fn: (r) => r[\"application\"] == \"${app}\")\r\n  |> filter(fn: (r) => r[\"_field\"] == \"pct90.0\")\r\n  |> filter(fn: (r) => r[\"testTitle\"] == \"${testTitle}\")\r\n  |> filter(fn: (r) => r[\"statut\"] == \"all\")\r\n  |> filter(\r\n        fn: (r) => if \"${type}\" == \"transaction\" then\r\n            r.transaction =~ /${transaction_mark}/\r\n        else\r\n            r.transaction !~ /${transaction_mark}/ and r.transaction != \"all\",\r\n  )\r\n  |> group(columns: [\"_field\"])\r\n  |> keep(columns: [\"_value\", \"_field\"])\r\n  |> median()\r\n  |> set(key: \"_field\", value: \"pct90\")"
+                      }
+                    },
+                    "refId": "C",
+                    "hidden": false
+                  }
+                },
+                {
+                  "kind": "PanelQuery",
+                  "spec": {
+                    "query": {
+                      "kind": "DataQuery",
+                      "group": "influxdb",
+                      "version": "v0",
+                      "datasource": {
+                        "name": "cg1m6i42v8e0wd"
+                      },
+                      "spec": {
+                        "query": "from(bucket: v.bucket)\r\n  |> range(start: v.timeRangeStart, stop: v.timeRangeStop)\r\n  |> filter(fn: (r) => r[\"_measurement\"] == \"jmeter\")\r\n  |> filter(fn: (r) => r[\"application\"] == \"${app}\")\r\n  |> filter(fn: (r) => r[\"_field\"] == \"count\")\r\n  |> filter(fn: (r) => r[\"testTitle\"] == \"${testTitle}\")\r\n  |> filter(fn: (r) => r[\"statut\"] == \"all\")\r\n  |> filter(fn: (r) => r[\"transaction\"] !~ /${transaction_mark}/ and r[\"transaction\"] != \"all\")\r\n  |> keep(columns: [\"_field\", \"_value\", \"_time\"])\r\n  |> aggregateWindow(every: ${send_interval}s, fn: sum, createEmpty: true)\r\n  |> map(fn: (r) => ({ r with _value: float(v: r._value / float(v: ${send_interval}))}))\r\n  |> keep(columns: [\"_value\", \"_field\"])\r\n  |> median()\r\n  |> set(key: \"_field\", value: \"RPS\")"
+                      }
+                    },
+                    "refId": "D",
+                    "hidden": false
+                  }
+                },
+                {
+                  "kind": "PanelQuery",
+                  "spec": {
+                    "query": {
+                      "kind": "DataQuery",
+                      "group": "influxdb",
+                      "version": "v0",
+                      "datasource": {
+                        "name": "cg1m6i42v8e0wd"
+                      },
+                      "spec": {
+                        "query": "from(bucket: v.bucket)\r\n  |> range(start: v.timeRangeStart, stop: v.timeRangeStop)\r\n  |> filter(fn: (r) => r[\"_measurement\"] == \"jmeter\")\r\n  |> filter(fn: (r) => r[\"application\"] == \"${app}\")\r\n  |> filter(fn: (r) => r[\"_field\"] == \"count\")\r\n  |> filter(fn: (r) => r[\"testTitle\"] == \"${testTitle}\")\r\n  |> filter(fn: (r) => r[\"statut\"] == \"all\")\r\n  |> filter(fn: (r) => r[\"transaction\"] !~ /${transaction_mark}/ and r[\"transaction\"] != \"all\")\r\n  |> group(columns: [\"_field\"])\r\n  |> keep(columns: [\"_value\", \"_field\"])\r\n  |> sum()\r\n  |> set(key: \"_field\", value: \"Total requests\")"
+                      }
+                    },
+                    "refId": "E",
+                    "hidden": false
+                  }
+                },
+                {
+                  "kind": "PanelQuery",
+                  "spec": {
+                    "query": {
+                      "kind": "DataQuery",
+                      "group": "influxdb",
+                      "version": "v0",
+                      "datasource": {
+                        "name": "cg1m6i42v8e0wd"
+                      },
+                      "spec": {
+                        "query": "from(bucket: v.bucket)\r\n  |> range(start: v.timeRangeStart, stop: v.timeRangeStop)\r\n  |> filter(fn: (r) => r[\"_measurement\"] == \"jmeter\")\r\n  |> filter(fn: (r) => r[\"application\"] == \"${app}\")\r\n  |> filter(fn: (r) => r[\"_field\"] == \"count\")\r\n  |> filter(fn: (r) => r[\"testTitle\"] == \"${testTitle}\")\r\n  |> filter(\r\n        fn: (r) => if \"request\" == \"transaction\" then\r\n            r.transaction =~ /${transaction_mark}/\r\n        else\r\n            r.transaction !~ /${transaction_mark}/ and r.transaction != \"all\",\r\n  )\r\n  |> group(columns: [\"application\", \"statut\"])\r\n  |> sum()\r\n  |> filter(fn: (r) => exists r.statut)\r\n  |> pivot(rowKey: [\"application\"], columnKey: [\"statut\"], valueColumn: \"_value\")\r\n  |> map(fn: (r) => ({ r with errors: if exists r.ko then (r.ko/r.all*100.0) else 0.0 }))\r\n  |> keep(columns: [\"errors\"])"
+                      }
+                    },
+                    "refId": "F",
+                    "hidden": false
+                  }
+                }
+              ],
+              "transformations": [],
+              "queryOptions": {}
+            }
+          },
+          "vizConfig": {
+            "kind": "VizConfig",
+            "group": "gauge",
+            "version": "13.2.3",
+            "spec": {
+              "options": {
+                "barShape": "flat",
+                "barWidthFactor": 0.5,
+                "effects": {
+                  "barGlow": false,
+                  "centerGlow": false,
+                  "gradient": false
+                },
+                "endpointMarker": "point",
+                "minVizHeight": 75,
+                "minVizWidth": 75,
+                "orientation": "auto",
+                "reduceOptions": {
+                  "calcs": [
+                    "lastNotNull"
+                  ],
+                  "fields": "",
+                  "values": false
+                },
+                "segmentCount": 1,
+                "segmentSpacing": 0.3,
+                "shape": "gauge",
+                "showThresholdLabels": false,
+                "showThresholdMarkers": true,
+                "sizing": "auto",
+                "sparkline": false,
+                "textMode": "auto"
+              },
+              "fieldConfig": {
+                "defaults": {
+                  "thresholds": {
+                    "mode": "absolute",
+                    "steps": [
+                      {
+                        "value": 0,
+                        "color": "green"
+                      }
+                    ]
+                  },
+                  "color": {
+                    "mode": "thresholds"
+                  }
+                },
+                "overrides": [
+                  {
+                    "matcher": {
+                      "id": "byName",
+                      "options": "_value pct90"
+                    },
+                    "properties": [
+                      {
+                        "id": "unit",
+                        "value": "ms"
+                      },
+                      {
+                        "id": "displayName",
+                        "value": "pct90"
+                      }
+                    ]
+                  },
+                  {
+                    "matcher": {
+                      "id": "byName",
+                      "options": "_value Median"
+                    },
+                    "properties": [
+                      {
+                        "id": "displayName",
+                        "value": "Median"
+                      },
+                      {
+                        "id": "unit",
+                        "value": "ms"
+                      }
+                    ]
+                  },
+                  {
+                    "matcher": {
+                      "id": "byName",
+                      "options": "_value pct75"
+                    },
+                    "properties": [
+                      {
+                        "id": "displayName",
+                        "value": "pct75"
+                      },
+                      {
+                        "id": "unit",
+                        "value": "ms"
+                      }
+                    ]
+                  },
+                  {
+                    "matcher": {
+                      "id": "byName",
+                      "options": "_value RPS"
+                    },
+                    "properties": [
+                      {
+                        "id": "displayName",
+                        "value": "RPS"
+                      }
+                    ]
+                  },
+                  {
+                    "matcher": {
+                      "id": "byName",
+                      "options": "_value Total requests"
+                    },
+                    "properties": [
+                      {
+                        "id": "displayName",
+                        "value": "Total requests"
+                      }
+                    ]
+                  },
+                  {
+                    "matcher": {
+                      "id": "byName",
+                      "options": "errors"
+                    },
+                    "properties": [
+                      {
+                        "id": "displayName",
+                        "value": "Errors"
+                      },
+                      {
+                        "id": "unit",
+                        "value": "percent"
+                      },
+                      {
+                        "id": "thresholds",
+                        "value": {
+                          "mode": "absolute",
+                          "steps": [
+                            {
+                              "color": "green",
+                              "value": 0
+                            },
+                            {
+                              "color": "orange",
+                              "value": 5
+                            },
+                            {
+                              "color": "red",
+                              "value": 10
+                            }
+                          ]
+                        }
+                      }
+                    ]
+                  }
+                ]
+              }
+            }
+          }
+        }
+      },
+      "panel-20": {
+        "kind": "Panel",
+        "spec": {
+          "id": 20,
+          "title": "90pct Response Time per sampler",
+          "description": "",
+          "links": [],
+          "data": {
+            "kind": "QueryGroup",
+            "spec": {
+              "queries": [
+                {
+                  "kind": "PanelQuery",
+                  "spec": {
+                    "query": {
+                      "kind": "DataQuery",
+                      "group": "influxdb",
+                      "version": "v0",
+                      "datasource": {
+                        "name": "cg1m6i42v8e0wd"
+                      },
+                      "spec": {
+                        "query": "from(bucket: v.bucket)\r\n  |> range(start: v.timeRangeStart, stop: v.timeRangeStop)\r\n  |> filter(fn: (r) => r._measurement == \"jmeter\")\r\n  |> filter(fn: (r) => r[\"application\"] == \"${app}\")\r\n  |> filter(fn: (r) => r[\"testTitle\"] == \"${testTitle}\")\r\n  |> filter(fn: (r) => r._field == \"pct90.0\")\r\n  |> filter(fn: (r) => r[\"statut\"] == \"all\")\r\n  |> filter(\r\n        fn: (r) => if \"${type}\" == \"transaction\" then\r\n            r.transaction =~ /${transaction_mark}/\r\n        else\r\n            r.transaction !~ /${transaction_mark}/ and r.transaction != \"all\",\r\n  )\r\n  |> keep(columns: [\"_value\", \"_time\", \"transaction\"])\r\n  |> aggregateWindow(every: ${aggregation}s, fn: median, createEmpty: false)"
+                      }
+                    },
+                    "refId": "A",
+                    "hidden": false
+                  }
+                }
+              ],
+              "transformations": [],
+              "queryOptions": {
+                "interval": "$send_interval"
+              }
+            }
+          },
+          "vizConfig": {
+            "kind": "VizConfig",
+            "group": "timeseries",
+            "version": "13.2.3",
+            "spec": {
+              "options": {
+                "legend": {
+                  "calcs": [
+                    "mean"
+                  ],
+                  "displayMode": "table",
+                  "placement": "right",
+                  "showLegend": true
+                },
+                "tooltip": {
+                  "hideZeros": false,
+                  "mode": "single",
+                  "sort": "none"
+                }
+              },
+              "fieldConfig": {
+                "defaults": {
+                  "unit": "ms",
+                  "min": 0,
+                  "thresholds": {
+                    "mode": "absolute",
+                    "steps": [
+                      {
+                        "value": 0,
+                        "color": "green"
+                      },
+                      {
+                        "value": 80,
+                        "color": "red"
+                      }
+                    ]
+                  },
+                  "color": {
+                    "mode": "palette-classic"
+                  },
+                  "custom": {
+                    "axisBorderShow": false,
+                    "axisCenteredZero": false,
+                    "axisColorMode": "text",
+                    "axisLabel": "",
+                    "axisPlacement": "auto",
+                    "barAlignment": 0,
+                    "barWidthFactor": 0.6,
+                    "drawStyle": "line",
+                    "fillOpacity": 0,
+                    "gradientMode": "none",
+                    "hideFrom": {
+                      "legend": false,
+                      "tooltip": false,
+                      "viz": false
+                    },
+                    "insertNulls": false,
+                    "lineInterpolation": "linear",
+                    "lineStyle": {
+                      "fill": "solid"
+                    },
+                    "lineWidth": 1,
+                    "pointSize": 5,
+                    "scaleDistribution": {
+                      "type": "linear"
+                    },
+                    "showPoints": "auto",
+                    "showValues": false,
+                    "spanNulls": false,
+                    "stacking": {
+                      "group": "A",
+                      "mode": "none"
+                    },
+                    "thresholdsStyle": {
+                      "mode": "off"
+                    }
+                  }
+                },
+                "overrides": [
+                  {
+                    "matcher": {
+                      "id": "byName",
+                      "scope": "series",
+                      "options": "S01_Browse_And_Checkout_T01_OpenApplication"
+                    },
+                    "properties": [
+                      {
+                        "id": "displayName",
+                        "value": "001_HomePage"
+                      }
+                    ]
+                  },
+                  {
+                    "matcher": {
+                      "id": "byName",
+                      "scope": "series",
+                      "options": "S01_Browse_And_Checkout_T02_NavigateToTables"
+                    },
+                    "properties": [
+                      {
+                        "id": "displayName",
+                        "value": "002_NavigateToTables"
+                      }
+                    ]
+                  },
+                  {
+                    "matcher": {
+                      "id": "byName",
+                      "scope": "series",
+                      "options": "S01_Browse_And_Checkout_T03_OpenTableProductCard"
+                    },
+                    "properties": [
+                      {
+                        "id": "displayName",
+                        "value": "003_Tables"
+                      }
+                    ]
+                  },
+                  {
+                    "matcher": {
+                      "id": "byName",
+                      "scope": "series",
+                      "options": "S01_Browse_And_Checkout_T04_AddTableToCart"
+                    },
+                    "properties": [
+                      {
+                        "id": "displayName",
+                        "value": "004_Tables_addToCart"
+                      }
+                    ]
+                  },
+                  {
+                    "matcher": {
+                      "id": "byName",
+                      "scope": "series",
+                      "options": "S01_Browse_And_Checkout_T05_NavigateToChairs"
+                    },
+                    "properties": [
+                      {
+                        "id": "displayName",
+                        "value": "005_NavigateToChairs"
+                      }
+                    ]
+                  },
+                  {
+                    "matcher": {
+                      "id": "byName",
+                      "scope": "series",
+                      "options": "S01_Browse_And_Checkout_T06_OpenChairProductCard"
+                    },
+                    "properties": []
+                  },
+                  {
+                    "matcher": {
+                      "id": "byName",
+                      "scope": "series",
+                      "options": "S01_Browse_And_Checkout_T06_OpenChairProductCard"
+                    },
+                    "properties": [
+                      {
+                        "id": "displayName",
+                        "value": "006_Chairs"
+                      }
+                    ]
+                  },
+                  {
+                    "matcher": {
+                      "id": "byName",
+                      "scope": "series",
+                      "options": "S01_Browse_And_Checkout_T07_AddChairToCart"
+                    },
+                    "properties": [
+                      {
+                        "id": "displayName",
+                        "value": "007_Chairs_addToCart"
+                      }
+                    ]
+                  },
+                  {
+                    "matcher": {
+                      "id": "byName",
+                      "scope": "series",
+                      "options": "S01_Browse_And_Checkout_T08_OpenCart"
+                    },
+                    "properties": [
+                      {
+                        "id": "displayName",
+                        "value": "008_Cart"
+                      }
+                    ]
+                  },
+                  {
+                    "matcher": {
+                      "id": "byName",
+                      "scope": "series",
+                      "options": "S01_Browse_And_Checkout_T09_OpenCheckout"
+                    },
+                    "properties": [
+                      {
+                        "id": "displayName",
+                        "value": "009_Checkout"
+                      }
+                    ]
+                  },
+                  {
+                    "matcher": {
+                      "id": "byName",
+                      "scope": "series",
+                      "options": "S01_Browse_And_Checkout_T10_LoadStateDropdown"
+                    },
+                    "properties": [
+                      {
+                        "id": "displayName",
+                        "value": "010_Choosing_Country"
+                      }
+                    ]
+                  },
+                  {
+                    "matcher": {
+                      "id": "byName",
+                      "scope": "series",
+                      "options": "S01_Browse_And_Checkout_T11_SubmitOrder"
+                    },
+                    "properties": [
+                      {
+                        "id": "displayName",
+                        "value": "011_Place_Order"
+                      }
+                    ]
+                  }
+                ]
+              }
+            }
+          }
+        }
+      },
+      "panel-24": {
+        "kind": "Panel",
+        "spec": {
+          "id": 24,
+          "title": "Panel Title",
+          "description": "",
+          "links": [],
+          "data": {
+            "kind": "QueryGroup",
+            "spec": {
+              "queries": [
+                {
+                  "kind": "PanelQuery",
+                  "spec": {
+                    "query": {
+                      "kind": "DataQuery",
+                      "group": "influxdb",
+                      "version": "v0",
+                      "datasource": {
+                        "name": "cg1m6i42v8e0wd"
+                      },
+                      "spec": {
+                        "query": "from(bucket: v.bucket)\r\n  |> range(start: v.timeRangeStart, stop: v.timeRangeStop)\r\n  |> filter(fn: (r) => r._measurement == \"jmeter\")\r\n  |> filter(fn: (r) => r[\"application\"] == \"${app}\")\r\n  |> filter(fn: (r) => r[\"testTitle\"] == \"${testTitle}\")\r\n  |> filter(fn: (r) => r._field == \"avg\" or r._field == \"max\" or r._field == \"min\" or r._field == \"pct50.0\" or r._field == \"pct75.0\" or r._field == \"pct90.0\")\r\n  |> filter(fn: (r) => r[\"statut\"] == \"all\")\r\n  |> keep(columns: [\"_value\", \"transaction\", \"_field\"])\r\n  |> filter(\r\n        fn: (r) => if \"${type}\" == \"transaction\" then\r\n            r.transaction =~ /${transaction_mark}/\r\n        else\r\n            r.transaction !~ /${transaction_mark}/ and r.transaction != \"all\",\r\n  )\r\n  |> group(columns: [\"transaction\",\"_field\"])\r\n  |> median()\r\n  |> group()\r\n  |> pivot(rowKey: [\"transaction\"], columnKey: [\"_field\"], valueColumn: \"_value\")\r\n  |> rename(columns: {\"pct50.0\": \"pct50\"})\r\n  |> rename(columns: {\"pct75.0\": \"pct75\"})\r\n  |> rename(columns: {\"pct90.0\": \"pct90\"})"
+                      }
+                    },
+                    "refId": "G",
+                    "hidden": false
+                  }
+                },
+                {
+                  "kind": "PanelQuery",
+                  "spec": {
+                    "query": {
+                      "kind": "DataQuery",
+                      "group": "influxdb",
+                      "version": "v0",
+                      "datasource": {
+                        "name": "cg1m6i42v8e0wd"
+                      },
+                      "spec": {
+                        "query": "from(bucket: v.bucket)\r\n  |> range(start: v.timeRangeStart, stop: v.timeRangeStop)\r\n  |> filter(fn: (r) => r._measurement == \"jmeter\")\r\n  |> filter(fn: (r) => r[\"application\"] == \"${app}\")\r\n  |> filter(fn: (r) => r[\"testTitle\"] == \"${testTitle}\")\r\n  |> filter(fn: (r) => r._field == \"count\")\r\n  |> filter(fn: (r) => r[\"statut\"] == \"all\")\r\n  |> filter(\r\n        fn: (r) => if \"${type}\" == \"transaction\" then\r\n            r.transaction =~ /${transaction_mark}/\r\n        else\r\n            r.transaction !~ /${transaction_mark}/ and r.transaction != \"all\",\r\n  )\r\n  |> keep(columns: [\"_value\", \"_time\", \"transaction\"])\r\n  |> aggregateWindow(every: 60s, fn: sum, createEmpty: false)\r\n  |> map(fn: (r) => ({ r with _value: float(v: r._value / float(v: 60))}))\r\n  |> median()\r\n  |> group()\r\n  |> rename(columns: {\"_value\": \"RPS\"})\r\n  |> keep(columns: [\"RPS\", \"transaction\"])"
+                      }
+                    },
+                    "refId": "D",
+                    "hidden": false
+                  }
+                },
+                {
+                  "kind": "PanelQuery",
+                  "spec": {
+                    "query": {
+                      "kind": "DataQuery",
+                      "group": "influxdb",
+                      "version": "v0",
+                      "datasource": {
+                        "name": "cg1m6i42v8e0wd"
+                      },
+                      "spec": {
+                        "query": "from(bucket: v.bucket)\r\n  |> range(start: v.timeRangeStart, stop: v.timeRangeStop)\r\n  |> filter(fn: (r) => r._measurement == \"jmeter\")\r\n  |> filter(fn: (r) => r[\"application\"] == \"${app}\")\r\n  |> filter(fn: (r) => r[\"testTitle\"] == \"${testTitle}\")\r\n  |> filter(fn: (r) => r._field == \"count\")\r\n  |> filter(\r\n        fn: (r) => if \"${type}\" == \"transaction\" then\r\n            r.transaction =~ /${transaction_mark}/\r\n        else\r\n            r.transaction !~ /${transaction_mark}/ and r.transaction != \"all\",\r\n  )\r\n  |> group(columns: [\"transaction\", \"statut\"])\r\n  |> sum()\r\n  |> filter(fn: (r) => exists r.statut)\r\n  |> pivot(rowKey: [\"transaction\"], columnKey: [\"statut\"], valueColumn: \"_value\")\r\n  |> group()\r\n  |> map(fn: (r) => ({ r with Errors: if exists r.ko then (r.ko/r.all*100.0) else 0.0 }))\r\n  |> rename(columns: {\"all\": \"Count\"})\r\n  |> keep(columns: [\"transaction\",\"Errors\",\"Count\"])"
+                      }
+                    },
+                    "refId": "E",
+                    "hidden": false
+                  }
+                },
+                {
+                  "kind": "PanelQuery",
+                  "spec": {
+                    "query": {
+                      "kind": "DataQuery",
+                      "group": "influxdb",
+                      "version": "v0",
+                      "datasource": {
+                        "name": "cg1m6i42v8e0wd"
+                      },
+                      "spec": {
+                        "query": "from(bucket: v.bucket)\r\n  |> range(start: v.timeRangeStart, stop: v.timeRangeStop)\r\n  |> filter(fn: (r) => r._measurement == \"jmeter\")\r\n  |> filter(fn: (r) => r[\"application\"] == \"${app}\")\r\n  |> filter(fn: (r) => r[\"testTitle\"] == \"${testTitle}\")\r\n  |> filter(fn: (r) => r._field == \"avg\")\r\n  |> filter(fn: (r) => r[\"statut\"] == \"all\")\r\n  |> filter(\r\n        fn: (r) => if \"${type}\" == \"transaction\" then\r\n            r.transaction =~ /${transaction_mark}/\r\n        else\r\n            r.transaction !~ /${transaction_mark}/ and r.transaction != \"all\",\r\n  )\r\n  |> keep(columns: [\"_value\", \"transaction\"])\r\n  |> group(columns: [\"transaction\"])\r\n  |> stddev()\r\n  |> toInt()\r\n  |> group()\r\n  |> rename(columns: {\"_value\": \"stddev\"})"
+                      }
+                    },
+                    "refId": "A",
+                    "hidden": false
+                  }
+                }
+              ],
+              "transformations": [
+                {
+                  "kind": "Transformation",
+                  "group": "merge",
+                  "spec": {
+                    "options": {}
+                  }
+                },
+                {
+                  "kind": "Transformation",
+                  "group": "organize",
+                  "spec": {
+                    "options": {
+                      "excludeByName": {},
+                      "indexByName": {
+                        "Count": 7,
+                        "Errors": 10,
+                        "RPS": 8,
+                        "avg": 1,
+                        "max": 6,
+                        "min": 5,
+                        "pct50": 2,
+                        "pct75": 3,
+                        "pct90": 4,
+                        "stddev": 9,
+                        "transaction": 0
+                      },
+                      "renameByName": {
+                        "avg": "Avg",
+                        "max": "Max",
+                        "min": "Min",
+                        "pct75": "",
+                        "stddev": "Stddev"
+                      }
+                    }
+                  }
+                }
+              ],
+              "queryOptions": {}
+            }
+          },
+          "vizConfig": {
+            "kind": "VizConfig",
+            "group": "table",
+            "version": "13.2.3",
+            "spec": {
+              "options": {
+                "cellHeight": "sm",
+                "frameIndex": 5,
+                "showHeader": true,
+                "sortBy": []
+              },
+              "fieldConfig": {
+                "defaults": {
+                  "unit": "ms",
+                  "thresholds": {
+                    "mode": "absolute",
+                    "steps": [
+                      {
+                        "value": 0,
+                        "color": "green"
+                      },
+                      {
+                        "value": 80,
+                        "color": "red"
+                      }
+                    ]
+                  },
+                  "color": {
+                    "mode": "thresholds"
+                  },
+                  "custom": {
+                    "align": "auto",
+                    "cellOptions": {
+                      "type": "auto"
+                    },
+                    "footer": {
+                      "reducers": []
+                    },
+                    "inspect": false,
+                    "minWidth": 100
+                  }
+                },
+                "overrides": [
+                  {
+                    "matcher": {
+                      "id": "byName",
+                      "options": "RPS"
+                    },
+                    "properties": [
+                      {
+                        "id": "unit",
+                        "value": "reqps"
+                      }
+                    ]
+                  },
+                  {
+                    "matcher": {
+                      "id": "byName",
+                      "options": "Errors"
+                    },
+                    "properties": [
+                      {
+                        "id": "unit",
+                        "value": "percent"
+                      },
+                      {
+                        "id": "decimals",
+                        "value": 2
+                      }
+                    ]
+                  },
+                  {
+                    "matcher": {
+                      "id": "byName",
+                      "options": "Count"
+                    },
+                    "properties": []
+                  },
+                  {
+                    "matcher": {
+                      "id": "byName",
+                      "scope": "series",
+                      "options": "transaction"
+                    },
+                    "properties": [
+                      {
+                        "id": "custom.width",
+                        "value": 265
+                      }
+                    ]
+                  },
+                  {
+                    "matcher": {
+                      "id": "byName",
+                      "options": ""
+                    },
+                    "properties": []
+                  }
+                ]
+              }
+            }
+          }
+        }
+      },
+      "panel-37": {
+        "kind": "Panel",
+        "spec": {
+          "id": 37,
+          "title": "Network (${type})",
+          "description": "",
+          "links": [],
+          "data": {
+            "kind": "QueryGroup",
+            "spec": {
+              "queries": [
+                {
+                  "kind": "PanelQuery",
+                  "spec": {
+                    "query": {
+                      "kind": "DataQuery",
+                      "group": "influxdb",
+                      "version": "v0",
+                      "datasource": {
+                        "name": "cg1m6i42v8e0wd"
+                      },
+                      "spec": {
+                        "query": "from(bucket: v.bucket)\r\n  |> range(start: v.timeRangeStart, stop: v.timeRangeStop)\r\n  |> filter(fn: (r) => r._measurement == \"jmeter\")\r\n  |> filter(fn: (r) => r[\"application\"] == \"${app}\")\r\n  |> filter(fn: (r) => r[\"_field\"] == \"rb\")\r\n  |> filter(fn: (r) => r[\"statut\"] == \"all\")\r\n  |> filter(fn: (r) => r[\"testTitle\"] == \"${testTitle}\")\r\n  |> filter(\r\n        fn: (r) => if \"${type}\" == \"transaction\" then\r\n            r.transaction =~ /${transaction_mark}/\r\n        else\r\n            r.transaction !~ /${transaction_mark}/ and r.transaction != \"all\",\r\n  )\r\n  |> filter(fn: (r) => r[\"statut\"] == \"all\")\r\n  |> group(columns: [\"_field\"])\r\n  |> aggregateWindow(every: ${aggregation}s, fn: sum, createEmpty: false)\r\n  |> set(key: \"_field\", value: \"Received\")"
+                      }
+                    },
+                    "refId": "A",
+                    "hidden": false
+                  }
+                },
+                {
+                  "kind": "PanelQuery",
+                  "spec": {
+                    "query": {
+                      "kind": "DataQuery",
+                      "group": "influxdb",
+                      "version": "v0",
+                      "datasource": {
+                        "name": "cg1m6i42v8e0wd"
+                      },
+                      "spec": {
+                        "query": "from(bucket: v.bucket)\r\n  |> range(start: v.timeRangeStart, stop: v.timeRangeStop)\r\n  |> filter(fn: (r) => r._measurement == \"jmeter\")\r\n  |> filter(fn: (r) => r[\"application\"] == \"${app}\")\r\n  |> filter(fn: (r) => r[\"_field\"] == \"sb\")\r\n  |> filter(fn: (r) => r[\"statut\"] == \"all\")\r\n  |> filter(fn: (r) => r[\"testTitle\"] == \"${testTitle}\")\r\n  |> filter(\r\n        fn: (r) => if \"${type}\" == \"transaction\" then\r\n            r.transaction =~ /${transaction_mark}/\r\n        else\r\n            r.transaction !~ /${transaction_mark}/ and r.transaction != \"all\",\r\n  )\r\n  |> filter(fn: (r) => r[\"statut\"] == \"all\")\r\n  |> group(columns: [\"_field\"])\r\n  |> aggregateWindow(every: ${aggregation}s, fn: sum, createEmpty: false)\r\n  |> set(key: \"_field\", value: \"Sent\")"
+                      }
+                    },
+                    "refId": "B",
+                    "hidden": false
+                  }
+                }
+              ],
+              "transformations": [],
+              "queryOptions": {
+                "interval": "$send_interval"
+              }
+            }
+          },
+          "vizConfig": {
+            "kind": "VizConfig",
+            "group": "timeseries",
+            "version": "13.2.3",
+            "spec": {
+              "options": {
+                "legend": {
+                  "calcs": [
+                    "sum"
+                  ],
+                  "displayMode": "list",
+                  "placement": "bottom",
+                  "showLegend": true
+                },
+                "tooltip": {
+                  "hideZeros": false,
+                  "mode": "single",
+                  "sort": "none"
+                }
+              },
+              "fieldConfig": {
+                "defaults": {
+                  "unit": "bytes",
+                  "thresholds": {
+                    "mode": "absolute",
+                    "steps": [
+                      {
+                        "value": 0,
+                        "color": "green"
+                      },
+                      {
+                        "value": 80,
+                        "color": "red"
+                      }
+                    ]
+                  },
+                  "color": {
+                    "mode": "palette-classic"
+                  },
+                  "custom": {
+                    "axisBorderShow": false,
+                    "axisCenteredZero": false,
+                    "axisColorMode": "text",
+                    "axisLabel": "",
+                    "axisPlacement": "auto",
+                    "barAlignment": 0,
+                    "barWidthFactor": 0.6,
+                    "drawStyle": "line",
+                    "fillOpacity": 0,
+                    "gradientMode": "none",
+                    "hideFrom": {
+                      "legend": false,
+                      "tooltip": false,
+                      "viz": false
+                    },
+                    "insertNulls": false,
+                    "lineInterpolation": "linear",
+                    "lineWidth": 1,
+                    "pointSize": 5,
+                    "scaleDistribution": {
+                      "type": "linear"
+                    },
+                    "showPoints": "auto",
+                    "showValues": false,
+                    "spanNulls": false,
+                    "stacking": {
+                      "group": "A",
+                      "mode": "none"
+                    },
+                    "thresholdsStyle": {
+                      "mode": "off"
+                    }
+                  }
+                },
+                "overrides": [
+                  {
+                    "matcher": {
+                      "id": "byName",
+                      "options": "Sent"
+                    },
+                    "properties": [
+                      {
+                        "id": "custom.axisPlacement",
+                        "value": "auto"
+                      }
+                    ]
+                  }
+                ]
+              }
+            }
+          }
+        }
+      },
+      "panel-39": {
+        "kind": "Panel",
+        "spec": {
+          "id": 39,
+          "title": "Errors per second and Load Profile",
+          "description": "",
+          "links": [],
+          "data": {
+            "kind": "QueryGroup",
+            "spec": {
+              "queries": [
+                {
+                  "kind": "PanelQuery",
+                  "spec": {
+                    "query": {
+                      "kind": "DataQuery",
+                      "group": "influxdb",
+                      "version": "v0",
+                      "datasource": {
+                        "name": "cg1m6i42v8e0wd"
+                      },
+                      "spec": {
+                        "query": "from(bucket: v.bucket)\r\n  |> range(start: v.timeRangeStart, stop: v.timeRangeStop)\r\n  |> filter(fn: (r) => r._measurement == \"jmeter\")\r\n  |> filter(fn: (r) => r[\"application\"] == \"${app}\")\r\n  |> filter(fn: (r) => r._field == \"count\")\r\n  |> filter(fn: (r) => r[\"testTitle\"] == \"${testTitle}\")\r\n  |> filter(fn: (r) => r[\"statut\"] == \"ko\")\r\n  |> filter(fn: (r) => r[\"transaction\"] !~ /${transaction_mark}/ and r[\"transaction\"] != \"all\")\r\n  |> toFloat()\r\n  |> group(columns: [\"_field\"])\r\n  |> aggregateWindow(every: ${aggregation}s, fn: sum, createEmpty: true)\r\n  |> fill(column: \"_value\", value: 0.0)\r\n  |> map(fn: (r) => ({ r with _value: r._value / float(v: ${aggregation}) }))\r\n  |> set(key: \"_field\", value: \"Errors Per Second\")"
+                      }
+                    },
+                    "refId": "A",
+                    "hidden": false
+                  }
+                },
+                {
+                  "kind": "PanelQuery",
+                  "spec": {
+                    "query": {
+                      "kind": "DataQuery",
+                      "group": "influxdb",
+                      "version": "v0",
+                      "datasource": {
+                        "name": "cg1m6i42v8e0wd"
+                      },
+                      "spec": {
+                        "query": "from(bucket: v.bucket)\r\n  |> range(start: v.timeRangeStart, stop: v.timeRangeStop)\r\n  |> filter(fn: (r) => r._measurement == \"jmeter\")\r\n  |> filter(fn: (r) => r[\"application\"] == \"${app}\")\r\n  |> filter(fn: (r) => r._field == \"maxAT\")\r\n  |> filter(fn: (r) => r[\"testTitle\"] == \"${testTitle}\")\r\n  |> keep(columns: [\"_field\", \"_value\", \"_time\"])\r\n  |> aggregateWindow(every: ${aggregation}s, fn: last, createEmpty: false)\r\n  |> set(key: \"_field\", value: \"Active threads\")"
+                      }
+                    },
+                    "refId": "B",
+                    "hidden": false
+                  }
+                }
+              ],
+              "transformations": [],
+              "queryOptions": {
+                "interval": "$send_interval"
+              }
+            }
+          },
+          "vizConfig": {
+            "kind": "VizConfig",
+            "group": "timeseries",
+            "version": "13.2.3",
+            "spec": {
+              "options": {
+                "legend": {
+                  "calcs": [],
+                  "displayMode": "list",
+                  "placement": "bottom",
+                  "showLegend": true
+                },
+                "tooltip": {
+                  "hideZeros": false,
+                  "mode": "single",
+                  "sort": "none"
+                }
+              },
+              "fieldConfig": {
+                "defaults": {
+                  "unit": "req",
+                  "min": 0,
+                  "thresholds": {
+                    "mode": "absolute",
+                    "steps": [
+                      {
+                        "value": 0,
+                        "color": "green"
+                      },
+                      {
+                        "value": 80,
+                        "color": "red"
+                      }
+                    ]
+                  },
+                  "color": {
+                    "mode": "fixed",
+                    "fixedColor": "red"
+                  },
+                  "custom": {
+                    "axisBorderShow": false,
+                    "axisCenteredZero": false,
+                    "axisColorMode": "text",
+                    "axisLabel": "",
+                    "axisPlacement": "auto",
+                    "axisWidth": 60,
+                    "barAlignment": 0,
+                    "barWidthFactor": 0.6,
+                    "drawStyle": "line",
+                    "fillOpacity": 0,
+                    "gradientMode": "opacity",
+                    "hideFrom": {
+                      "legend": false,
+                      "tooltip": false,
+                      "viz": false
+                    },
+                    "insertNulls": false,
+                    "lineInterpolation": "linear",
+                    "lineWidth": 2,
+                    "pointSize": 8,
+                    "scaleDistribution": {
+                      "type": "linear"
+                    },
+                    "showPoints": "never",
+                    "showValues": false,
+                    "spanNulls": false,
+                    "stacking": {
+                      "group": "A",
+                      "mode": "none"
+                    },
+                    "thresholdsStyle": {
+                      "mode": "off"
+                    }
+                  }
+                },
+                "overrides": [
+                  {
+                    "matcher": {
+                      "id": "byName",
+                      "scope": "series",
+                      "options": "Active threads"
+                    },
+                    "properties": [
+                      {
+                        "id": "custom.axisPlacement",
+                        "value": "right"
+                      },
+                      {
+                        "id": "color",
+                        "value": {
+                          "fixedColor": "dark-yellow",
+                          "mode": "fixed"
+                        }
+                      },
+                      {
+                        "id": "unit",
+                        "value": "vu"
+                      },
+                      {
+                        "id": "max",
+                        "value": 140
+                      }
+                    ]
+                  },
+                  {
+                    "matcher": {
+                      "id": "byName",
+                      "scope": "series",
+                      "options": "Active threads"
+                    },
+                    "properties": [
+                      {
+                        "id": "max"
+                      }
+                    ]
+                  },
+                  {
+                    "matcher": {
+                      "id": "byName",
+                      "scope": "series",
+                      "options": "Errors Per Second"
+                    },
+                    "properties": [
+                      {
+                        "id": "unit",
+                        "value": "err/s"
+                      }
+                    ]
+                  }
+                ]
+              }
+            }
+          }
+        }
+      },
+      "panel-44": {
+        "kind": "Panel",
+        "spec": {
+          "id": 44,
+          "title": "75pct Response Time per sampler",
+          "description": "",
+          "links": [],
+          "data": {
+            "kind": "QueryGroup",
+            "spec": {
+              "queries": [
+                {
+                  "kind": "PanelQuery",
+                  "spec": {
+                    "query": {
+                      "kind": "DataQuery",
+                      "group": "influxdb",
+                      "version": "v0",
+                      "datasource": {
+                        "name": "cg1m6i42v8e0wd"
+                      },
+                      "spec": {
+                        "query": "from(bucket: v.bucket)\r\n  |> range(start: v.timeRangeStart, stop: v.timeRangeStop)\r\n  |> filter(fn: (r) => r._measurement == \"jmeter\")\r\n  |> filter(fn: (r) => r[\"application\"] == \"${app}\")\r\n  |> filter(fn: (r) => r[\"testTitle\"] == \"${testTitle}\")\r\n  |> filter(fn: (r) => r._field == \"pct75.0\")\r\n  |> filter(fn: (r) => r[\"statut\"] == \"all\")\r\n  |> filter(\r\n        fn: (r) => if \"${type}\" == \"transaction\" then\r\n            r.transaction =~ /${transaction_mark}/\r\n        else\r\n            r.transaction !~ /${transaction_mark}/ and r.transaction != \"all\",\r\n  )\r\n  |> keep(columns: [\"_value\", \"_time\", \"transaction\"])\r\n  |> aggregateWindow(every: ${aggregation}s, fn: median, createEmpty: false)"
+                      }
+                    },
+                    "refId": "A",
+                    "hidden": false
+                  }
+                }
+              ],
+              "transformations": [],
+              "queryOptions": {
+                "interval": "$send_interval"
+              }
+            }
+          },
+          "vizConfig": {
+            "kind": "VizConfig",
+            "group": "timeseries",
+            "version": "13.2.3",
+            "spec": {
+              "options": {
+                "legend": {
+                  "calcs": [
+                    "mean"
+                  ],
+                  "displayMode": "table",
+                  "placement": "right",
+                  "showLegend": true
+                },
+                "tooltip": {
+                  "hideZeros": false,
+                  "mode": "single",
+                  "sort": "none"
+                }
+              },
+              "fieldConfig": {
+                "defaults": {
+                  "unit": "ms",
+                  "min": 0,
+                  "thresholds": {
+                    "mode": "absolute",
+                    "steps": [
+                      {
+                        "value": 0,
+                        "color": "green"
+                      },
+                      {
+                        "value": 80,
+                        "color": "red"
+                      }
+                    ]
+                  },
+                  "color": {
+                    "mode": "palette-classic"
+                  },
+                  "custom": {
+                    "axisBorderShow": false,
+                    "axisCenteredZero": false,
+                    "axisColorMode": "text",
+                    "axisLabel": "",
+                    "axisPlacement": "auto",
+                    "barAlignment": 0,
+                    "barWidthFactor": 0.6,
+                    "drawStyle": "line",
+                    "fillOpacity": 0,
+                    "gradientMode": "none",
+                    "hideFrom": {
+                      "legend": false,
+                      "tooltip": false,
+                      "viz": false
+                    },
+                    "insertNulls": false,
+                    "lineInterpolation": "linear",
+                    "lineStyle": {
+                      "fill": "solid"
+                    },
+                    "lineWidth": 1,
+                    "pointSize": 5,
+                    "scaleDistribution": {
+                      "type": "linear"
+                    },
+                    "showPoints": "auto",
+                    "showValues": false,
+                    "spanNulls": false,
+                    "stacking": {
+                      "group": "A",
+                      "mode": "none"
+                    },
+                    "thresholdsStyle": {
+                      "mode": "off"
+                    }
+                  }
+                },
+                "overrides": [
+                  {
+                    "matcher": {
+                      "id": "byName",
+                      "scope": "series",
+                      "options": "S01_Browse_And_Checkout_T01_OpenApplication"
+                    },
+                    "properties": [
+                      {
+                        "id": "displayName",
+                        "value": "001_HomePage"
+                      }
+                    ]
+                  },
+                  {
+                    "matcher": {
+                      "id": "byName",
+                      "scope": "series",
+                      "options": "S01_Browse_And_Checkout_T02_NavigateToTables"
+                    },
+                    "properties": [
+                      {
+                        "id": "displayName",
+                        "value": "002_NavigateToTables"
+                      }
+                    ]
+                  },
+                  {
+                    "matcher": {
+                      "id": "byName",
+                      "scope": "series",
+                      "options": "S01_Browse_And_Checkout_T03_OpenTableProductCard"
+                    },
+                    "properties": [
+                      {
+                        "id": "displayName",
+                        "value": "003_Tables"
+                      }
+                    ]
+                  },
+                  {
+                    "matcher": {
+                      "id": "byName",
+                      "scope": "series",
+                      "options": "S01_Browse_And_Checkout_T04_AddTableToCart"
+                    },
+                    "properties": [
+                      {
+                        "id": "displayName",
+                        "value": "004_Tables_addToCart"
+                      }
+                    ]
+                  },
+                  {
+                    "matcher": {
+                      "id": "byName",
+                      "scope": "series",
+                      "options": "S01_Browse_And_Checkout_T05_NavigateToChairs"
+                    },
+                    "properties": [
+                      {
+                        "id": "displayName",
+                        "value": "005_NavigateToChairs"
+                      }
+                    ]
+                  },
+                  {
+                    "matcher": {
+                      "id": "byName",
+                      "scope": "series",
+                      "options": "S01_Browse_And_Checkout_T06_OpenChairProductCard"
+                    },
+                    "properties": [
+                      {
+                        "id": "displayName",
+                        "value": "006_Chairs"
+                      }
+                    ]
+                  },
+                  {
+                    "matcher": {
+                      "id": "byName",
+                      "scope": "series",
+                      "options": "S01_Browse_And_Checkout_T07_AddChairToCart"
+                    },
+                    "properties": [
+                      {
+                        "id": "displayName",
+                        "value": "007_Chairs_addToCart"
+                      }
+                    ]
+                  },
+                  {
+                    "matcher": {
+                      "id": "byName",
+                      "scope": "series",
+                      "options": "S01_Browse_And_Checkout_T08_OpenCart"
+                    },
+                    "properties": [
+                      {
+                        "id": "displayName",
+                        "value": "008_Cart"
+                      }
+                    ]
+                  },
+                  {
+                    "matcher": {
+                      "id": "byName",
+                      "scope": "series",
+                      "options": "S01_Browse_And_Checkout_T09_OpenCheckout"
+                    },
+                    "properties": [
+                      {
+                        "id": "displayName",
+                        "value": "009_Checkout"
+                      }
+                    ]
+                  },
+                  {
+                    "matcher": {
+                      "id": "byName",
+                      "scope": "series",
+                      "options": "S01_Browse_And_Checkout_T10_LoadStateDropdown"
+                    },
+                    "properties": [
+                      {
+                        "id": "displayName",
+                        "value": "010_Choosing_Country"
+                      }
+                    ]
+                  },
+                  {
+                    "matcher": {
+                      "id": "byName",
+                      "scope": "series",
+                      "options": "S01_Browse_And_Checkout_T11_SubmitOrder"
+                    },
+                    "properties": [
+                      {
+                        "id": "displayName",
+                        "value": "011_Place_Order"
+                      }
+                    ]
+                  }
+                ]
+              }
+            }
+          }
+        }
+      },
+      "panel-61": {
+        "kind": "Panel",
+        "spec": {
+          "id": 61,
+          "title": "Errors per sample/response code",
+          "description": "",
+          "links": [],
+          "data": {
+            "kind": "QueryGroup",
+            "spec": {
+              "queries": [
+                {
+                  "kind": "PanelQuery",
+                  "spec": {
+                    "query": {
+                      "kind": "DataQuery",
+                      "group": "influxdb",
+                      "version": "v0",
+                      "datasource": {
+                        "name": "cg1m6i42v8e0wd"
+                      },
+                      "spec": {
+                        "query": "import \"strings\"\r\n\r\nfrom(bucket: v.bucket)\r\n  |> range(start: v.timeRangeStart, stop: v.timeRangeStop)\r\n  |> filter(fn: (r) => r._measurement == \"jmeter\")\r\n  |> filter(fn: (r) => r[\"application\"] == \"${app}\")\r\n  |> filter(fn: (r) => r[\"testTitle\"] == \"${testTitle}\")\r\n  |> filter(fn: (r) => r[\"_field\"] == \"count\")\r\n  |> filter(fn: (r) => r[\"responseCode\"] != \"\")\r\n  |> filter(fn: (r) => r[\"transaction\"] !~ /${transaction_mark}/ and r[\"transaction\"] != \"all\")\r\n  |> map(fn: (r) => ({r with transaction: strings.replaceAll(v: r.transaction, t: \"S01_Browse_And_Checkout_\", u: \"\")}))\r\n  |> group(columns: [\"transaction\", \"responseCode\"])\r\n  |> aggregateWindow(every: ${aggregation}s, fn: sum, createEmpty: true)\r\n  |> fill(value: 0.0)"
+                      }
+                    },
+                    "refId": "A",
+                    "hidden": false
+                  }
+                }
+              ],
+              "transformations": [],
+              "queryOptions": {
+                "interval": "$send_interval"
+              }
+            }
+          },
+          "vizConfig": {
+            "kind": "VizConfig",
+            "group": "bargauge",
+            "version": "13.2.3",
+            "spec": {
+              "options": {
+                "displayMode": "lcd",
+                "legend": {
+                  "calcs": [],
+                  "displayMode": "list",
+                  "placement": "bottom",
+                  "showLegend": false
+                },
+                "maxVizHeight": 300,
+                "minVizHeight": 16,
+                "minVizWidth": 8,
+                "namePlacement": "auto",
+                "orientation": "horizontal",
+                "reduceOptions": {
+                  "calcs": [
+                    "sum"
+                  ],
+                  "fields": "",
+                  "values": false
+                },
+                "showUnfilled": true,
+                "sizing": "auto",
+                "valueMode": "color"
+              },
+              "fieldConfig": {
+                "defaults": {
+                  "displayName": "${__field.labels.transaction}: ${__field.labels.responseCode}",
+                  "unit": "er",
+                  "min": 0,
+                  "thresholds": {
+                    "mode": "absolute",
+                    "steps": [
+                      {
+                        "value": 0,
+                        "color": "green"
+                      },
+                      {
+                        "value": 80,
+                        "color": "red"
+                      }
+                    ]
+                  },
+                  "color": {
+                    "mode": "continuous-GrYlRd"
+                  },
+                  "fieldMinMax": false
+                },
+                "overrides": []
+              }
+            }
+          }
+        }
+      },
+      "panel-62": {
+        "kind": "Panel",
+        "spec": {
+          "id": 62,
+          "title": "Median Response Time per sampler",
+          "description": "",
+          "links": [],
+          "data": {
+            "kind": "QueryGroup",
+            "spec": {
+              "queries": [
+                {
+                  "kind": "PanelQuery",
+                  "spec": {
+                    "query": {
+                      "kind": "DataQuery",
+                      "group": "influxdb",
+                      "version": "v0",
+                      "datasource": {
+                        "name": "cg1m6i42v8e0wd"
+                      },
+                      "spec": {
+                        "query": "from(bucket: v.bucket)\r\n  |> range(start: v.timeRangeStart, stop: v.timeRangeStop)\r\n  |> filter(fn: (r) => r._measurement == \"jmeter\")\r\n  |> filter(fn: (r) => r[\"application\"] == \"${app}\")\r\n  |> filter(fn: (r) => r[\"testTitle\"] == \"${testTitle}\")\r\n  |> filter(fn: (r) => r._field == \"pct50.0\")\r\n  |> filter(fn: (r) => r[\"statut\"] == \"all\")\r\n  |> filter(\r\n        fn: (r) => if \"${type}\" == \"transaction\" then\r\n            r.transaction =~ /${transaction_mark}/\r\n        else\r\n            r.transaction !~ /${transaction_mark}/ and r.transaction != \"all\",\r\n  )\r\n  |> keep(columns: [\"_value\", \"_time\", \"transaction\"])\r\n  |> aggregateWindow(every: ${aggregation}s, fn: median, createEmpty: false)"
+                      }
+                    },
+                    "refId": "A",
+                    "hidden": false
+                  }
+                }
+              ],
+              "transformations": [],
+              "queryOptions": {
+                "interval": "$send_interval"
+              }
+            }
+          },
+          "vizConfig": {
+            "kind": "VizConfig",
+            "group": "timeseries",
+            "version": "13.2.3",
+            "spec": {
+              "options": {
+                "legend": {
+                  "calcs": [
+                    "mean"
+                  ],
+                  "displayMode": "table",
+                  "placement": "right",
+                  "showLegend": true
+                },
+                "tooltip": {
+                  "hideZeros": false,
+                  "mode": "single",
+                  "sort": "none"
+                }
+              },
+              "fieldConfig": {
+                "defaults": {
+                  "unit": "ms",
+                  "min": 0,
+                  "thresholds": {
+                    "mode": "absolute",
+                    "steps": [
+                      {
+                        "value": 0,
+                        "color": "green"
+                      },
+                      {
+                        "value": 80,
+                        "color": "red"
+                      }
+                    ]
+                  },
+                  "color": {
+                    "mode": "palette-classic"
+                  },
+                  "custom": {
+                    "axisBorderShow": false,
+                    "axisCenteredZero": false,
+                    "axisColorMode": "text",
+                    "axisLabel": "",
+                    "axisPlacement": "auto",
+                    "barAlignment": 0,
+                    "barWidthFactor": 0.6,
+                    "drawStyle": "line",
+                    "fillOpacity": 0,
+                    "gradientMode": "none",
+                    "hideFrom": {
+                      "legend": false,
+                      "tooltip": false,
+                      "viz": false
+                    },
+                    "insertNulls": false,
+                    "lineInterpolation": "linear",
+                    "lineStyle": {
+                      "fill": "solid"
+                    },
+                    "lineWidth": 1,
+                    "pointSize": 5,
+                    "scaleDistribution": {
+                      "type": "linear"
+                    },
+                    "showPoints": "auto",
+                    "showValues": false,
+                    "spanNulls": false,
+                    "stacking": {
+                      "group": "A",
+                      "mode": "none"
+                    },
+                    "thresholdsStyle": {
+                      "mode": "off"
+                    }
+                  }
+                },
+                "overrides": [
+                  {
+                    "matcher": {
+                      "id": "byName",
+                      "scope": "series",
+                      "options": "S01_Browse_And_Checkout_T01_OpenApplication"
+                    },
+                    "properties": [
+                      {
+                        "id": "displayName",
+                        "value": "001_HomePage"
+                      }
+                    ]
+                  },
+                  {
+                    "matcher": {
+                      "id": "byName",
+                      "scope": "series",
+                      "options": "S01_Browse_And_Checkout_T02_NavigateToTables"
+                    },
+                    "properties": [
+                      {
+                        "id": "displayName",
+                        "value": "002_NavigateToTables"
+                      }
+                    ]
+                  },
+                  {
+                    "matcher": {
+                      "id": "byName",
+                      "scope": "series",
+                      "options": "S01_Browse_And_Checkout_T03_OpenTableProductCard"
+                    },
+                    "properties": [
+                      {
+                        "id": "displayName",
+                        "value": "003_Tables"
+                      }
+                    ]
+                  },
+                  {
+                    "matcher": {
+                      "id": "byName",
+                      "scope": "series",
+                      "options": "S01_Browse_And_Checkout_T04_AddTableToCart"
+                    },
+                    "properties": [
+                      {
+                        "id": "displayName",
+                        "value": "004_Tables_addToCart"
+                      }
+                    ]
+                  },
+                  {
+                    "matcher": {
+                      "id": "byName",
+                      "scope": "series",
+                      "options": "S01_Browse_And_Checkout_T05_NavigateToChairs"
+                    },
+                    "properties": [
+                      {
+                        "id": "displayName",
+                        "value": "005_NavigateToChairs"
+                      }
+                    ]
+                  },
+                  {
+                    "matcher": {
+                      "id": "byName",
+                      "scope": "series",
+                      "options": "S01_Browse_And_Checkout_T06_OpenChairProductCard"
+                    },
+                    "properties": [
+                      {
+                        "id": "displayName",
+                        "value": "006_Chairs"
+                      }
+                    ]
+                  },
+                  {
+                    "matcher": {
+                      "id": "byName",
+                      "scope": "series",
+                      "options": "S01_Browse_And_Checkout_T07_AddChairToCart"
+                    },
+                    "properties": [
+                      {
+                        "id": "displayName",
+                        "value": "007_Chairs_addToCart"
+                      }
+                    ]
+                  },
+                  {
+                    "matcher": {
+                      "id": "byName",
+                      "scope": "series",
+                      "options": "S01_Browse_And_Checkout_T08_OpenCart"
+                    },
+                    "properties": [
+                      {
+                        "id": "displayName",
+                        "value": "008_Cart"
+                      }
+                    ]
+                  },
+                  {
+                    "matcher": {
+                      "id": "byName",
+                      "scope": "series",
+                      "options": "S01_Browse_And_Checkout_T09_OpenCheckout"
+                    },
+                    "properties": [
+                      {
+                        "id": "displayName",
+                        "value": "009_Checkout"
+                      }
+                    ]
+                  },
+                  {
+                    "matcher": {
+                      "id": "byName",
+                      "scope": "series",
+                      "options": "S01_Browse_And_Checkout_T10_LoadStateDropdown"
+                    },
+                    "properties": [
+                      {
+                        "id": "displayName",
+                        "value": "010_Choosing_Country"
+                      }
+                    ]
+                  },
+                  {
+                    "matcher": {
+                      "id": "byName",
+                      "scope": "series",
+                      "options": "S01_Browse_And_Checkout_T11_SubmitOrder"
+                    },
+                    "properties": [
+                      {
+                        "id": "displayName",
+                        "value": "011_Place_Order"
+                      }
+                    ]
+                  }
+                ]
+              }
+            }
+          }
+        }
+      },
+      "panel-63": {
+        "kind": "Panel",
+        "spec": {
+          "id": 63,
+          "title": "Total Throughput and Load Profile",
+          "description": "",
+          "links": [],
+          "data": {
+            "kind": "QueryGroup",
+            "spec": {
+              "queries": [
+                {
+                  "kind": "PanelQuery",
+                  "spec": {
+                    "query": {
+                      "kind": "DataQuery",
+                      "group": "influxdb",
+                      "version": "v0",
+                      "datasource": {
+                        "name": "cg1m6i42v8e0wd"
+                      },
+                      "spec": {
+                        "query": "from(bucket: v.bucket)\r\n  |> range(start: v.timeRangeStart, stop: v.timeRangeStop)\r\n  |> filter(fn: (r) => r._measurement == \"jmeter\")\r\n  |> filter(fn: (r) => r[\"application\"] == \"${app}\")\r\n  |> filter(fn: (r) => r._field == \"maxAT\")\r\n  |> filter(fn: (r) => r[\"testTitle\"] == \"${testTitle}\")\r\n  |> keep(columns: [\"_field\", \"_value\", \"_time\"])\r\n  |> aggregateWindow(every: ${aggregation}s, fn: last, createEmpty: false)\r\n  |> set(key: \"_field\", value: \"Active threads\")"
+                      }
+                    },
+                    "refId": "A",
+                    "hidden": false
+                  }
+                },
+                {
+                  "kind": "PanelQuery",
+                  "spec": {
+                    "query": {
+                      "kind": "DataQuery",
+                      "group": "influxdb",
+                      "version": "v0",
+                      "datasource": {
+                        "name": "cg1m6i42v8e0wd"
+                      },
+                      "spec": {
+                        "query": "from(bucket: v.bucket)\r\n  |> range(start: v.timeRangeStart, stop: v.timeRangeStop)\r\n  |> filter(fn: (r) => r[\"_measurement\"] == \"jmeter\")\r\n  |> filter(fn: (r) => r[\"application\"] == \"${app}\")\r\n  |> filter(fn: (r) => r[\"_field\"] == \"count\")\r\n  |> filter(fn: (r) => r[\"testTitle\"] == \"${testTitle}\")\r\n  |> filter(fn: (r) => r[\"statut\"] == \"all\")\r\n  |> filter(fn: (r) => r[\"transaction\"] =~ /${transaction_mark}/)\r\n  |> keep(columns: [\"_field\", \"_value\", \"_time\"])\r\n  |> aggregateWindow(every: ${aggregation}s, fn: sum, createEmpty: false)\r\n  |> map(fn: (r) => ({ r with _value: float(v: r._value / float(v: ${aggregation}))}))\r\n  |> set(key: \"_field\", value: \"Transactions per second\")"
+                      }
+                    },
+                    "refId": "B",
+                    "hidden": false
+                  }
+                },
+                {
+                  "kind": "PanelQuery",
+                  "spec": {
+                    "query": {
+                      "kind": "DataQuery",
+                      "group": "influxdb",
+                      "version": "v0",
+                      "datasource": {
+                        "name": "cg1m6i42v8e0wd"
+                      },
+                      "spec": {
+                        "query": "from(bucket: v.bucket)\r\n  |> range(start: v.timeRangeStart, stop: v.timeRangeStop)\r\n  |> filter(fn: (r) => r[\"_measurement\"] == \"jmeter\")\r\n  |> filter(fn: (r) => r[\"application\"] == \"${app}\")\r\n  |> filter(fn: (r) => r[\"_field\"] == \"count\")\r\n  |> filter(fn: (r) => r[\"testTitle\"] == \"${testTitle}\")\r\n  |> filter(fn: (r) => r[\"statut\"] == \"all\")\r\n  |> filter(fn: (r) => r[\"transaction\"] !~ /${transaction_mark}/ and r[\"transaction\"] != \"all\")\r\n  |> keep(columns: [\"_field\", \"_value\", \"_time\"])\r\n  |> aggregateWindow(every: ${aggregation}s, fn: sum, createEmpty: false)\r\n  |> map(fn: (r) => ({ r with _value: float(v: r._value / float(v: ${aggregation}))}))\r\n  |> set(key: \"_field\", value: \"Requests per second\")"
+                      }
+                    },
+                    "refId": "C",
+                    "hidden": false
+                  }
+                }
+              ],
+              "transformations": [],
+              "queryOptions": {
+                "interval": "$send_interval"
+              }
+            }
+          },
+          "vizConfig": {
+            "kind": "VizConfig",
+            "group": "timeseries",
+            "version": "13.2.3",
+            "spec": {
+              "options": {
+                "legend": {
+                  "calcs": [],
+                  "displayMode": "list",
+                  "enableFacetedFilter": false,
+                  "placement": "bottom",
+                  "showLegend": true
+                },
+                "tooltip": {
+                  "hideZeros": false,
+                  "mode": "single",
+                  "sort": "none"
+                }
+              },
+              "fieldConfig": {
+                "defaults": {
+                  "unit": "reqps",
+                  "thresholds": {
+                    "mode": "absolute",
+                    "steps": [
+                      {
+                        "value": 0,
+                        "color": "green"
+                      },
+                      {
+                        "value": 80,
+                        "color": "red"
+                      }
+                    ]
+                  },
+                  "color": {
+                    "mode": "palette-classic"
+                  },
+                  "custom": {
+                    "axisBorderShow": false,
+                    "axisCenteredZero": false,
+                    "axisColorMode": "text",
+                    "axisLabel": "",
+                    "axisPlacement": "auto",
+                    "axisWidth": 60,
+                    "barAlignment": 0,
+                    "barWidthFactor": 0.6,
+                    "drawStyle": "line",
+                    "fillOpacity": 0,
+                    "gradientMode": "opacity",
+                    "hideFrom": {
+                      "legend": false,
+                      "tooltip": false,
+                      "viz": false
+                    },
+                    "insertNulls": false,
+                    "lineInterpolation": "linear",
+                    "lineStyle": {
+                      "fill": "solid"
+                    },
+                    "lineWidth": 2,
+                    "pointSize": 5,
+                    "scaleDistribution": {
+                      "type": "linear"
+                    },
+                    "showPoints": "never",
+                    "showValues": false,
+                    "spanNulls": false,
+                    "stacking": {
+                      "group": "A",
+                      "mode": "none"
+                    },
+                    "thresholdsStyle": {
+                      "mode": "off"
+                    }
+                  }
+                },
+                "overrides": [
+                  {
+                    "matcher": {
+                      "id": "byName",
+                      "options": "Active threads"
+                    },
+                    "properties": [
+                      {
+                        "id": "custom.axisPlacement",
+                        "value": "right"
+                      },
+                      {
+                        "id": "unit",
+                        "value": "vu"
+                      },
+                      {
+                        "id": "color",
+                        "value": {
+                          "fixedColor": "dark-yellow",
+                          "mode": "fixed"
+                        }
+                      },
+                      {
+                        "id": "max",
+                        "value": 140
+                      }
+                    ]
+                  },
+                  {
+                    "matcher": {
+                      "id": "byName",
+                      "options": "Requests per second"
+                    },
+                    "properties": [
+                      {
+                        "id": "color",
+                        "value": {
+                          "fixedColor": "dark-green",
+                          "mode": "fixed"
+                        }
+                      }
+                    ]
+                  },
+                  {
+                    "matcher": {
+                      "id": "byName",
+                      "scope": "series",
+                      "options": "Active threads"
+                    },
+                    "properties": [
+                      {
+                        "id": "max"
+                      }
+                    ]
+                  }
+                ]
+              }
+            }
+          }
+        }
+      },
+      "panel-64": {
+        "kind": "Panel",
+        "spec": {
+          "id": 64,
+          "title": "Total throughput, Response Time and Error Count",
+          "description": "",
+          "links": [],
+          "data": {
+            "kind": "QueryGroup",
+            "spec": {
+              "queries": [
+                {
+                  "kind": "PanelQuery",
+                  "spec": {
+                    "query": {
+                      "kind": "DataQuery",
+                      "group": "influxdb",
+                      "version": "v0",
+                      "datasource": {
+                        "name": "cg1m6i42v8e0wd"
+                      },
+                      "spec": {
+                        "query": "from(bucket: v.bucket)\r\n  |> range(start: v.timeRangeStart, stop: v.timeRangeStop)\r\n  |> filter(fn: (r) => r._measurement == \"jmeter\")\r\n  |> filter(fn: (r) => r[\"application\"] == \"${app}\")\r\n  |> filter(fn: (r) => r._field == \"maxAT\")\r\n  |> filter(fn: (r) => r[\"testTitle\"] == \"${testTitle}\")\r\n  |> keep(columns: [\"_field\", \"_value\", \"_time\"])\r\n  |> aggregateWindow(every: ${aggregation}s, fn: last, createEmpty: false)\r\n  |> set(key: \"_field\", value: \"Active threads\")"
+                      }
+                    },
+                    "refId": "A",
+                    "hidden": false
+                  }
+                },
+                {
+                  "kind": "PanelQuery",
+                  "spec": {
+                    "query": {
+                      "kind": "DataQuery",
+                      "group": "influxdb",
+                      "version": "v0",
+                      "datasource": {
+                        "name": "cg1m6i42v8e0wd"
+                      },
+                      "spec": {
+                        "query": "from(bucket: v.bucket)\r\n  |> range(start: v.timeRangeStart, stop: v.timeRangeStop)\r\n  |> filter(fn: (r) => r[\"_measurement\"] == \"jmeter\")\r\n  |> filter(fn: (r) => r[\"application\"] == \"${app}\")\r\n  |> filter(fn: (r) => r[\"_field\"] == \"count\")\r\n  |> filter(fn: (r) => r[\"testTitle\"] == \"${testTitle}\")\r\n  |> filter(fn: (r) => r[\"statut\"] == \"all\")\r\n  |> filter(fn: (r) => r[\"transaction\"] =~ /${transaction_mark}/)\r\n  |> keep(columns: [\"_field\", \"_value\", \"_time\"])\r\n  |> aggregateWindow(every: ${aggregation}s, fn: sum, createEmpty: false)\r\n  |> map(fn: (r) => ({ r with _value: float(v: r._value / float(v: ${aggregation}))}))\r\n  |> set(key: \"_field\", value: \"Transactions per second\")"
+                      }
+                    },
+                    "refId": "B",
+                    "hidden": false
+                  }
+                },
+                {
+                  "kind": "PanelQuery",
+                  "spec": {
+                    "query": {
+                      "kind": "DataQuery",
+                      "group": "influxdb",
+                      "version": "v0",
+                      "datasource": {
+                        "name": "cg1m6i42v8e0wd"
+                      },
+                      "spec": {
+                        "query": "from(bucket: v.bucket)\r\n  |> range(start: v.timeRangeStart, stop: v.timeRangeStop)\r\n  |> filter(fn: (r) => r[\"_measurement\"] == \"jmeter\")\r\n  |> filter(fn: (r) => r[\"application\"] == \"${app}\")\r\n  |> filter(fn: (r) => r[\"_field\"] == \"count\")\r\n  |> filter(fn: (r) => r[\"testTitle\"] == \"${testTitle}\")\r\n  |> filter(fn: (r) => r[\"statut\"] == \"all\")\r\n  |> filter(fn: (r) => r[\"transaction\"] !~ /${transaction_mark}/ and r[\"transaction\"] != \"all\")\r\n  |> keep(columns: [\"_field\", \"_value\", \"_time\"])\r\n  |> aggregateWindow(every: ${aggregation}s, fn: sum, createEmpty: false)\r\n  |> map(fn: (r) => ({ r with _value: float(v: r._value / float(v: ${aggregation}))}))\r\n  |> set(key: \"_field\", value: \"Requests per second\")"
+                      }
+                    },
+                    "refId": "C",
+                    "hidden": false
+                  }
+                },
+                {
+                  "kind": "PanelQuery",
+                  "spec": {
+                    "query": {
+                      "kind": "DataQuery",
+                      "group": "influxdb",
+                      "version": "v0",
+                      "datasource": {
+                        "name": "cg1m6i42v8e0wd"
+                      },
+                      "spec": {
+                        "query": "from(bucket: v.bucket)\r\n  |> range(start: v.timeRangeStart, stop: v.timeRangeStop)\r\n  |> filter(fn: (r) => r._measurement == \"jmeter\")\r\n  |> filter(fn: (r) => r[\"application\"] == \"${app}\")\r\n  |> filter(fn: (r) => r._field == \"pct90.0\")\r\n  |> filter(fn: (r) => r[\"testTitle\"] == \"${testTitle}\")\r\n  |> filter(fn: (r) => r[\"statut\"] == \"all\")\r\n  |> filter(\r\n        fn: (r) => if \"${type}\" == \"transaction\" then\r\n            r.transaction =~ /${transaction_mark}/\r\n        else\r\n            r.transaction !~ /${transaction_mark}/ and r.transaction != \"all\",\r\n  )\r\n  |> group(columns:[\"_field\"])\r\n  |> aggregateWindow(every: ${aggregation}s, fn: median, createEmpty: false)\r\n  |> keep(columns: [\"_time\",\"_field\", \"_value\"])\r\n  |> set(key: \"_field\", value: \"pct90\")\r\n"
+                      }
+                    },
+                    "refId": "D",
+                    "hidden": false
+                  }
+                },
+                {
+                  "kind": "PanelQuery",
+                  "spec": {
+                    "query": {
+                      "kind": "DataQuery",
+                      "group": "influxdb",
+                      "version": "v0",
+                      "datasource": {
+                        "name": "cg1m6i42v8e0wd"
+                      },
+                      "spec": {
+                        "query": "from(bucket: v.bucket)\r\n  |> range(start: v.timeRangeStart, stop: v.timeRangeStop)\r\n  |> filter(fn: (r) => r._measurement == \"jmeter\")\r\n  |> filter(fn: (r) => r[\"application\"] == \"${app}\")\r\n  |> filter(fn: (r) => r._field == \"count\")\r\n  |> filter(fn: (r) => r[\"testTitle\"] == \"${testTitle}\")\r\n  |> filter(fn: (r) => r[\"statut\"] == \"ko\")\r\n  |> filter(fn: (r) => r[\"transaction\"] !~ /${transaction_mark}/ and r[\"transaction\"] != \"all\")\r\n  |> toFloat()\r\n  |> group(columns: [\"_field\"])\r\n  |> aggregateWindow(every: ${aggregation}s, fn: sum, createEmpty: true)\r\n  |> fill(column: \"_value\", value: 0.0)\r\n  |> map(fn: (r) => ({ r with _value: r._value / float(v: ${aggregation}) }))\r\n  |> set(key: \"_field\", value: \"Errors Per Second\")"
+                      }
+                    },
+                    "refId": "E",
+                    "hidden": false
+                  }
+                }
+              ],
+              "transformations": [],
+              "queryOptions": {
+                "interval": "$send_interval"
+              }
+            }
+          },
+          "vizConfig": {
+            "kind": "VizConfig",
+            "group": "timeseries",
+            "version": "13.2.3",
+            "spec": {
+              "options": {
+                "legend": {
+                  "calcs": [],
+                  "displayMode": "list",
+                  "enableFacetedFilter": false,
+                  "placement": "bottom",
+                  "showLegend": true
+                },
+                "tooltip": {
+                  "hideZeros": false,
+                  "mode": "single",
+                  "sort": "none"
+                }
+              },
+              "fieldConfig": {
+                "defaults": {
+                  "unit": "reqps",
+                  "thresholds": {
+                    "mode": "absolute",
+                    "steps": [
+                      {
+                        "value": 0,
+                        "color": "green"
+                      },
+                      {
+                        "value": 80,
+                        "color": "red"
+                      }
+                    ]
+                  },
+                  "color": {
+                    "mode": "palette-classic"
+                  },
+                  "custom": {
+                    "axisBorderShow": false,
+                    "axisCenteredZero": false,
+                    "axisColorMode": "text",
+                    "axisLabel": "",
+                    "axisPlacement": "auto",
+                    "axisWidth": 60,
+                    "barAlignment": 0,
+                    "barWidthFactor": 0.6,
+                    "drawStyle": "line",
+                    "fillOpacity": 0,
+                    "gradientMode": "opacity",
+                    "hideFrom": {
+                      "legend": false,
+                      "tooltip": false,
+                      "viz": false
+                    },
+                    "insertNulls": false,
+                    "lineInterpolation": "linear",
+                    "lineStyle": {
+                      "fill": "solid"
+                    },
+                    "lineWidth": 2,
+                    "pointSize": 5,
+                    "scaleDistribution": {
+                      "type": "linear"
+                    },
+                    "showPoints": "never",
+                    "showValues": false,
+                    "spanNulls": false,
+                    "stacking": {
+                      "group": "A",
+                      "mode": "none"
+                    },
+                    "thresholdsStyle": {
+                      "mode": "off"
+                    }
+                  }
+                },
+                "overrides": [
+                  {
+                    "matcher": {
+                      "id": "byName",
+                      "options": "Active threads"
+                    },
+                    "properties": [
+                      {
+                        "id": "custom.axisPlacement",
+                        "value": "right"
+                      },
+                      {
+                        "id": "unit",
+                        "value": "vu"
+                      },
+                      {
+                        "id": "color",
+                        "value": {
+                          "fixedColor": "dark-yellow",
+                          "mode": "fixed"
+                        }
+                      },
+                      {
+                        "id": "max",
+                        "value": 140
+                      }
+                    ]
+                  },
+                  {
+                    "matcher": {
+                      "id": "byName",
+                      "options": "Requests per second"
+                    },
+                    "properties": [
+                      {
+                        "id": "color",
+                        "value": {
+                          "fixedColor": "dark-green",
+                          "mode": "fixed"
+                        }
+                      },
+                      {
+                        "id": "custom.axisSoftMax",
+                        "value": 25
+                      }
+                    ]
+                  },
+                  {
+                    "matcher": {
+                      "id": "byName",
+                      "scope": "series",
+                      "options": "pct90"
+                    },
+                    "properties": [
+                      {
+                        "id": "unit",
+                        "value": "ms"
+                      },
+                      {
+                        "id": "custom.axisSoftMax",
+                        "value": 2
+                      }
+                    ]
+                  },
+                  {
+                    "matcher": {
+                      "id": "byName",
+                      "options": ""
+                    },
+                    "properties": []
+                  },
+                  {
+                    "matcher": {
+                      "id": "byName",
+                      "options": "Errors Per Second"
+                    },
+                    "properties": [
+                      {
+                        "id": "color",
+                        "value": {
+                          "fixedColor": "dark-red",
+                          "mode": "fixed"
+                        }
+                      }
+                    ]
+                  },
+                  {
+                    "matcher": {
+                      "id": "byName",
+                      "scope": "series",
+                      "options": "Active threads"
+                    },
+                    "properties": [
+                      {
+                        "id": "max"
+                      }
+                    ]
+                  },
+                  {
+                    "matcher": {
+                      "id": "byName",
+                      "scope": "series",
+                      "options": "Errors Per Second"
+                    },
+                    "properties": [
+                      {
+                        "id": "unit",
+                        "value": "err/s"
+                      }
+                    ]
+                  }
+                ]
+              }
+            }
+          }
+        }
+      },
+      "panel-65": {
+        "kind": "Panel",
+        "spec": {
+          "id": 65,
+          "title": "Load Profile (virtual users)",
+          "description": "",
+          "links": [],
+          "data": {
+            "kind": "QueryGroup",
+            "spec": {
+              "queries": [
+                {
+                  "kind": "PanelQuery",
+                  "spec": {
+                    "query": {
+                      "kind": "DataQuery",
+                      "group": "influxdb",
+                      "version": "v0",
+                      "datasource": {
+                        "name": "cg1m6i42v8e0wd"
+                      },
+                      "spec": {
+                        "query": "from(bucket: v.bucket)\r\n  |> range(start: v.timeRangeStart, stop: v.timeRangeStop)\r\n  |> filter(fn: (r) => r._measurement == \"jmeter\")\r\n  |> filter(fn: (r) => r[\"application\"] == \"${app}\")\r\n  |> filter(fn: (r) => r._field == \"maxAT\")\r\n  |> filter(fn: (r) => r[\"testTitle\"] == \"${testTitle}\")\r\n  |> keep(columns: [\"_field\", \"_value\", \"_time\"])\r\n  |> aggregateWindow(every: ${aggregation}s, fn: last, createEmpty: false)\r\n  |> set(key: \"_field\", value: \"Active threads\")"
+                      }
+                    },
+                    "refId": "A",
+                    "hidden": false
+                  }
+                }
+              ],
+              "transformations": [],
+              "queryOptions": {}
+            }
+          },
+          "vizConfig": {
+            "kind": "VizConfig",
+            "group": "timeseries",
+            "version": "13.2.3",
+            "spec": {
+              "options": {
+                "legend": {
+                  "calcs": [],
+                  "displayMode": "list",
+                  "placement": "bottom",
+                  "showLegend": false
+                },
+                "tooltip": {
+                  "hideZeros": false,
+                  "mode": "single",
+                  "sort": "none"
+                }
+              },
+              "fieldConfig": {
+                "defaults": {
+                  "thresholds": {
+                    "mode": "absolute",
+                    "steps": [
+                      {
+                        "value": 0,
+                        "color": "green"
+                      },
+                      {
+                        "value": 80,
+                        "color": "red"
+                      }
+                    ]
+                  },
+                  "color": {
+                    "mode": "palette-classic"
+                  },
+                  "custom": {
+                    "axisBorderShow": false,
+                    "axisCenteredZero": false,
+                    "axisColorMode": "text",
+                    "axisLabel": "",
+                    "axisPlacement": "auto",
+                    "barAlignment": 0,
+                    "barWidthFactor": 0.6,
+                    "drawStyle": "line",
+                    "fillOpacity": 0,
+                    "gradientMode": "none",
+                    "hideFrom": {
+                      "legend": false,
+                      "tooltip": false,
+                      "viz": false
+                    },
+                    "insertNulls": false,
+                    "lineInterpolation": "linear",
+                    "lineWidth": 1,
+                    "pointSize": 5,
+                    "scaleDistribution": {
+                      "type": "linear"
+                    },
+                    "showPoints": "auto",
+                    "showValues": false,
+                    "spanNulls": false,
+                    "stacking": {
+                      "group": "A",
+                      "mode": "none"
+                    },
+                    "thresholdsStyle": {
+                      "mode": "off"
+                    }
+                  }
+                },
+                "overrides": [
+                  {
+                    "matcher": {
+                      "id": "byName",
+                      "scope": "series",
+                      "options": "Active threads"
+                    },
+                    "properties": [
+                      {
+                        "id": "unit",
+                        "value": "vu"
+                      }
+                    ]
+                  }
+                ]
+              }
+            }
+          }
+        }
+      },
+      "panel-66": {
+        "kind": "Panel",
+        "spec": {
+          "id": 66,
+          "title": "Errors per sample",
+          "description": "",
+          "links": [],
+          "data": {
+            "kind": "QueryGroup",
+            "spec": {
+              "queries": [
+                {
+                  "kind": "PanelQuery",
+                  "spec": {
+                    "query": {
+                      "kind": "DataQuery",
+                      "group": "influxdb",
+                      "version": "v0",
+                      "datasource": {
+                        "name": "cg1m6i42v8e0wd"
+                      },
+                      "spec": {
+                        "query": "from(bucket: v.bucket)\r\n  |> range(start: v.timeRangeStart, stop: v.timeRangeStop)\r\n  |> filter(fn: (r) => r._measurement == \"jmeter\")\r\n  |> filter(fn: (r) => r[\"application\"] == \"${app}\")\r\n  |> filter(fn: (r) => r[\"testTitle\"] == \"${testTitle}\")\r\n  |> filter(fn: (r) => r[\"_field\"] == \"count\")\r\n  |> filter(fn: (r) => r[\"statut\"] == \"ko\")\r\n  |> filter(fn: (r) => r[\"transaction\"] !~ /${transaction_mark}/ and r[\"transaction\"] != \"all\")\r\n  |> group(columns: [\"transaction\"])\r\n  |> aggregateWindow(every: ${aggregation}s, fn: sum, createEmpty: true)"
+                      }
+                    },
+                    "refId": "B",
+                    "hidden": false
+                  }
+                }
+              ],
+              "transformations": [],
+              "queryOptions": {}
+            }
+          },
+          "vizConfig": {
+            "kind": "VizConfig",
+            "group": "timeseries",
+            "version": "13.2.3",
+            "spec": {
+              "options": {
+                "legend": {
+                  "calcs": [
+                    "sum"
+                  ],
+                  "displayMode": "table",
+                  "placement": "right",
+                  "showLegend": true
+                },
+                "tooltip": {
+                  "hideZeros": false,
+                  "mode": "single",
+                  "sort": "none"
+                }
+              },
+              "fieldConfig": {
+                "defaults": {
+                  "thresholds": {
+                    "mode": "absolute",
+                    "steps": [
+                      {
+                        "value": null,
+                        "color": "green"
+                      },
+                      {
+                        "value": 80,
+                        "color": "red"
+                      }
+                    ]
+                  },
+                  "color": {
+                    "mode": "palette-classic"
+                  },
+                  "custom": {
+                    "axisBorderShow": false,
+                    "axisCenteredZero": false,
+                    "axisColorMode": "text",
+                    "axisLabel": "",
+                    "axisPlacement": "auto",
+                    "barAlignment": 0,
+                    "barWidthFactor": 0.6,
+                    "drawStyle": "line",
+                    "fillOpacity": 0,
+                    "gradientMode": "none",
+                    "hideFrom": {
+                      "legend": false,
+                      "tooltip": false,
+                      "viz": false
+                    },
+                    "insertNulls": false,
+                    "lineInterpolation": "linear",
+                    "lineStyle": {
+                      "fill": "solid"
+                    },
+                    "lineWidth": 1,
+                    "pointSize": 5,
+                    "scaleDistribution": {
+                      "type": "linear"
+                    },
+                    "showPoints": "auto",
+                    "showValues": false,
+                    "spanNulls": false,
+                    "stacking": {
+                      "group": "A",
+                      "mode": "none"
+                    },
+                    "thresholdsStyle": {
+                      "mode": "off"
+                    }
+                  }
+                },
+                "overrides": [
+                  {
+                    "matcher": {
+                      "id": "byName",
+                      "scope": "series",
+                      "options": "Active threads"
+                    },
+                    "properties": [
+                      {
+                        "id": "unit",
+                        "value": "vu"
+                      }
+                    ]
+                  },
+                  {
+                    "matcher": {
+                      "id": "byName",
+                      "scope": "series",
+                      "options": "Value"
+                    },
+                    "properties": [
+                      {
+                        "id": "unit",
+                        "value": "err"
+                      }
+                    ]
+                  },
+                  {
+                    "matcher": {
+                      "id": "byName",
+                      "scope": "series",
+                      "options": "S01_Browse_And_Checkout_T01_OpenApplication"
+                    },
+                    "properties": [
+                      {
+                        "id": "displayName",
+                        "value": "001_HomePage"
+                      }
+                    ]
+                  },
+                  {
+                    "matcher": {
+                      "id": "byName",
+                      "scope": "series",
+                      "options": "S01_Browse_And_Checkout_T02_NavigateToTables"
+                    },
+                    "properties": [
+                      {
+                        "id": "displayName",
+                        "value": "002_NavigateToTables"
+                      }
+                    ]
+                  },
+                  {
+                    "matcher": {
+                      "id": "byName",
+                      "scope": "series",
+                      "options": "S01_Browse_And_Checkout_T03_OpenTableProductCard"
+                    },
+                    "properties": [
+                      {
+                        "id": "displayName",
+                        "value": "003_Tables"
+                      }
+                    ]
+                  },
+                  {
+                    "matcher": {
+                      "id": "byName",
+                      "scope": "series",
+                      "options": "S01_Browse_And_Checkout_T04_AddTableToCart"
+                    },
+                    "properties": [
+                      {
+                        "id": "displayName",
+                        "value": "004_Tables_addToCart"
+                      }
+                    ]
+                  },
+                  {
+                    "matcher": {
+                      "id": "byName",
+                      "scope": "series",
+                      "options": "S01_Browse_And_Checkout_T05_NavigateToChairs"
+                    },
+                    "properties": [
+                      {
+                        "id": "displayName",
+                        "value": "005_NavigateToChairs"
+                      }
+                    ]
+                  },
+                  {
+                    "matcher": {
+                      "id": "byName",
+                      "scope": "series",
+                      "options": "S01_Browse_And_Checkout_T06_OpenChairProductCard"
+                    },
+                    "properties": [
+                      {
+                        "id": "displayName",
+                        "value": "006_Chairs"
+                      }
+                    ]
+                  },
+                  {
+                    "matcher": {
+                      "id": "byName",
+                      "scope": "series",
+                      "options": "S01_Browse_And_Checkout_T07_AddChairToCart"
+                    },
+                    "properties": [
+                      {
+                        "id": "displayName",
+                        "value": "007_Chairs_addToCart"
+                      }
+                    ]
+                  },
+                  {
+                    "matcher": {
+                      "id": "byName",
+                      "scope": "series",
+                      "options": "S01_Browse_And_Checkout_T08_OpenCart"
+                    },
+                    "properties": [
+                      {
+                        "id": "displayName",
+                        "value": "008_Cart"
+                      }
+                    ]
+                  },
+                  {
+                    "matcher": {
+                      "id": "byName",
+                      "scope": "series",
+                      "options": "S01_Browse_And_Checkout_T09_OpenCheckout"
+                    },
+                    "properties": [
+                      {
+                        "id": "displayName",
+                        "value": "009_Checkout"
+                      }
+                    ]
+                  },
+                  {
+                    "matcher": {
+                      "id": "byName",
+                      "scope": "series",
+                      "options": "S01_Browse_And_Checkout_T10_LoadStateDropdown"
+                    },
+                    "properties": [
+                      {
+                        "id": "displayName",
+                        "value": "010_Choosing_Country"
+                      }
+                    ]
+                  },
+                  {
+                    "matcher": {
+                      "id": "byName",
+                      "scope": "series",
+                      "options": "S01_Browse_And_Checkout_T11_SubmitOrder"
+                    },
+                    "properties": [
+                      {
+                        "id": "displayName",
+                        "value": "011_Place_Order"
+                      }
+                    ]
+                  }
+                ]
+              }
+            }
+          }
+        }
+      },
+      "panel-7": {
+        "kind": "Panel",
+        "spec": {
+          "id": 7,
+          "title": "pct90 Response time and Load Profile",
+          "description": "",
+          "links": [],
+          "data": {
+            "kind": "QueryGroup",
+            "spec": {
+              "queries": [
+                {
+                  "kind": "PanelQuery",
+                  "spec": {
+                    "query": {
+                      "kind": "DataQuery",
+                      "group": "influxdb",
+                      "version": "v0",
+                      "datasource": {
+                        "name": "cg1m6i42v8e0wd"
+                      },
+                      "spec": {
+                        "query": "from(bucket: v.bucket)\r\n  |> range(start: v.timeRangeStart, stop: v.timeRangeStop)\r\n  |> filter(fn: (r) => r._measurement == \"jmeter\")\r\n  |> filter(fn: (r) => r[\"application\"] == \"${app}\")\r\n  |> filter(fn: (r) => r._field == \"pct90.0\")\r\n  |> filter(fn: (r) => r[\"testTitle\"] == \"${testTitle}\")\r\n  |> filter(fn: (r) => r[\"statut\"] == \"all\")\r\n  |> filter(\r\n        fn: (r) => if \"${type}\" == \"transaction\" then\r\n            r.transaction =~ /${transaction_mark}/\r\n        else\r\n            r.transaction !~ /${transaction_mark}/ and r.transaction != \"all\",\r\n  )\r\n  |> group(columns:[\"_field\"])\r\n  |> aggregateWindow(every: ${aggregation}s, fn: median, createEmpty: false)\r\n  |> keep(columns: [\"_time\",\"_field\", \"_value\"])\r\n  |> set(key: \"_field\", value: \"pct90\")"
+                      }
+                    },
+                    "refId": "C",
+                    "hidden": false
+                  }
+                },
+                {
+                  "kind": "PanelQuery",
+                  "spec": {
+                    "query": {
+                      "kind": "DataQuery",
+                      "group": "influxdb",
+                      "version": "v0",
+                      "datasource": {
+                        "name": "cg1m6i42v8e0wd"
+                      },
+                      "spec": {
+                        "query": "from(bucket: v.bucket)\r\n  |> range(start: v.timeRangeStart, stop: v.timeRangeStop)\r\n  |> filter(fn: (r) => r._measurement == \"jmeter\")\r\n  |> filter(fn: (r) => r[\"application\"] == \"${app}\")\r\n  |> filter(fn: (r) => r._field == \"maxAT\")\r\n  |> filter(fn: (r) => r[\"testTitle\"] == \"${testTitle}\")\r\n  |> keep(columns: [\"_field\", \"_value\", \"_time\"])\r\n  |> aggregateWindow(every: ${aggregation}s, fn: last, createEmpty: false)\r\n  |> set(key: \"_field\", value: \"Active threads\")"
+                      }
+                    },
+                    "refId": "A",
+                    "hidden": false
+                  }
+                }
+              ],
+              "transformations": [],
+              "queryOptions": {
+                "interval": "$send_interval"
+              }
+            }
+          },
+          "vizConfig": {
+            "kind": "VizConfig",
+            "group": "timeseries",
+            "version": "13.2.3",
+            "spec": {
+              "options": {
+                "legend": {
+                  "calcs": [],
+                  "displayMode": "list",
+                  "placement": "bottom",
+                  "showLegend": true
+                },
+                "tooltip": {
+                  "hideZeros": false,
+                  "mode": "single",
+                  "sort": "none"
+                }
+              },
+              "fieldConfig": {
+                "defaults": {
+                  "unit": "ms",
+                  "min": 0,
+                  "thresholds": {
+                    "mode": "absolute",
+                    "steps": [
+                      {
+                        "value": 0,
+                        "color": "green"
+                      },
+                      {
+                        "value": 80,
+                        "color": "red"
+                      }
+                    ]
+                  },
+                  "color": {
+                    "mode": "palette-classic"
+                  },
+                  "custom": {
+                    "axisBorderShow": false,
+                    "axisCenteredZero": false,
+                    "axisColorMode": "text",
+                    "axisLabel": "",
+                    "axisPlacement": "auto",
+                    "axisWidth": 60,
+                    "barAlignment": 0,
+                    "barWidthFactor": 0.6,
+                    "drawStyle": "line",
+                    "fillOpacity": 0,
+                    "gradientMode": "opacity",
+                    "hideFrom": {
+                      "legend": false,
+                      "tooltip": false,
+                      "viz": false
+                    },
+                    "insertNulls": false,
+                    "lineInterpolation": "linear",
+                    "lineStyle": {
+                      "fill": "solid"
+                    },
+                    "lineWidth": 2,
+                    "pointSize": 5,
+                    "scaleDistribution": {
+                      "type": "linear"
+                    },
+                    "showPoints": "never",
+                    "showValues": false,
+                    "spanNulls": false,
+                    "stacking": {
+                      "group": "A",
+                      "mode": "none"
+                    },
+                    "thresholdsStyle": {
+                      "mode": "off"
+                    }
+                  }
+                },
+                "overrides": [
+                  {
+                    "matcher": {
+                      "id": "byName",
+                      "scope": "series",
+                      "options": "Active threads"
+                    },
+                    "properties": [
+                      {
+                        "id": "custom.axisPlacement",
+                        "value": "right"
+                      },
+                      {
+                        "id": "color",
+                        "value": {
+                          "fixedColor": "dark-yellow",
+                          "mode": "fixed"
+                        }
+                      },
+                      {
+                        "id": "unit",
+                        "value": "vu"
+                      },
+                      {
+                        "id": "max",
+                        "value": 140
+                      }
+                    ]
+                  },
+                  {
+                    "matcher": {
+                      "id": "byName",
+                      "options": "pct90"
+                    },
+                    "properties": [
+                      {
+                        "id": "color",
+                        "value": {
+                          "fixedColor": "dark-blue",
+                          "mode": "fixed"
+                        }
+                      }
+                    ]
+                  },
+                  {
+                    "matcher": {
+                      "id": "byName",
+                      "options": "median"
+                    },
+                    "properties": [
+                      {
+                        "id": "color",
+                        "value": {
+                          "fixedColor": "light-blue",
+                          "mode": "fixed"
+                        }
+                      }
+                    ]
+                  },
+                  {
+                    "matcher": {
+                      "id": "byName",
+                      "scope": "series",
+                      "options": "Active threads"
+                    },
+                    "properties": [
+                      {
+                        "id": "max"
+                      }
+                    ]
+                  }
+                ]
+              }
+            }
+          }
+        }
+      }
+    },
+    "layout": {
+      "kind": "RowsLayout",
+      "spec": {
+        "rows": [
+          {
+            "kind": "RowsLayoutRow",
+            "spec": {
+              "title": "JMETER: Summary",
+              "collapse": false,
+              "layout": {
+                "kind": "TabsLayout",
+                "spec": {
+                  "tabs": [
+                    {
+                      "kind": "TabsLayoutTab",
+                      "spec": {
+                        "title": "Capacity tab",
+                        "layout": {
+                          "kind": "GridLayout",
+                          "spec": {
+                            "items": [
+                              {
+                                "kind": "GridLayoutItem",
+                                "spec": {
+                                  "x": 0,
+                                  "y": 0,
+                                  "width": 24,
+                                  "height": 4,
+                                  "element": {
+                                    "kind": "ElementReference",
+                                    "name": "panel-2"
+                                  }
+                                }
+                              },
+                              {
+                                "kind": "GridLayoutItem",
+                                "spec": {
+                                  "x": 0,
+                                  "y": 4,
+                                  "width": 9,
+                                  "height": 11,
+                                  "element": {
+                                    "kind": "ElementReference",
+                                    "name": "panel-37"
+                                  }
+                                }
+                              },
+                              {
+                                "kind": "GridLayoutItem",
+                                "spec": {
+                                  "x": 9,
+                                  "y": 4,
+                                  "width": 15,
+                                  "height": 11,
+                                  "element": {
+                                    "kind": "ElementReference",
+                                    "name": "panel-65"
+                                  }
+                                }
+                              },
+                              {
+                                "kind": "GridLayoutItem",
+                                "spec": {
+                                  "x": 0,
+                                  "y": 15,
+                                  "width": 24,
+                                  "height": 12,
+                                  "element": {
+                                    "kind": "ElementReference",
+                                    "name": "panel-39"
+                                  }
+                                }
+                              },
+                              {
+                                "kind": "GridLayoutItem",
+                                "spec": {
+                                  "x": 0,
+                                  "y": 27,
+                                  "width": 24,
+                                  "height": 12,
+                                  "element": {
+                                    "kind": "ElementReference",
+                                    "name": "panel-7"
+                                  }
+                                }
+                              },
+                              {
+                                "kind": "GridLayoutItem",
+                                "spec": {
+                                  "x": 0,
+                                  "y": 39,
+                                  "width": 24,
+                                  "height": 12,
+                                  "element": {
+                                    "kind": "ElementReference",
+                                    "name": "panel-63"
+                                  }
+                                }
+                              },
+                              {
+                                "kind": "GridLayoutItem",
+                                "spec": {
+                                  "x": 0,
+                                  "y": 51,
+                                  "width": 24,
+                                  "height": 12,
+                                  "element": {
+                                    "kind": "ElementReference",
+                                    "name": "panel-64"
+                                  }
+                                }
+                              }
+                            ]
+                          }
+                        }
+                      }
+                    }
+                  ]
+                }
+              }
+            }
+          },
+          {
+            "kind": "RowsLayoutRow",
+            "spec": {
+              "title": "JMETER: Aggregate report",
+              "collapse": false,
+              "hideHeader": false,
+              "fillScreen": false,
+              "layout": {
+                "kind": "GridLayout",
+                "spec": {
+                  "items": [
+                    {
+                      "kind": "GridLayoutItem",
+                      "spec": {
+                        "x": 0,
+                        "y": 0,
+                        "width": 24,
+                        "height": 13,
+                        "element": {
+                          "kind": "ElementReference",
+                          "name": "panel-24"
+                        }
+                      }
+                    }
+                  ]
+                }
+              }
+            }
+          },
+          {
+            "kind": "RowsLayoutRow",
+            "spec": {
+              "title": "JMETER: Throughput per sampler",
+              "collapse": false,
+              "layout": {
+                "kind": "GridLayout",
+                "spec": {
+                  "items": [
+                    {
+                      "kind": "GridLayoutItem",
+                      "spec": {
+                        "x": 0,
+                        "y": 0,
+                        "width": 24,
+                        "height": 9,
+                        "element": {
+                          "kind": "ElementReference",
+                          "name": "panel-15"
+                        }
+                      }
+                    }
+                  ]
+                }
+              }
+            }
+          },
+          {
+            "kind": "RowsLayoutRow",
+            "spec": {
+              "title": "JMETER: Response times",
+              "collapse": false,
+              "layout": {
+                "kind": "GridLayout",
+                "spec": {
+                  "items": [
+                    {
+                      "kind": "GridLayoutItem",
+                      "spec": {
+                        "x": 0,
+                        "y": 0,
+                        "width": 24,
+                        "height": 9,
+                        "element": {
+                          "kind": "ElementReference",
+                          "name": "panel-62"
+                        }
+                      }
+                    },
+                    {
+                      "kind": "GridLayoutItem",
+                      "spec": {
+                        "x": 0,
+                        "y": 9,
+                        "width": 24,
+                        "height": 9,
+                        "element": {
+                          "kind": "ElementReference",
+                          "name": "panel-44"
+                        }
+                      }
+                    },
+                    {
+                      "kind": "GridLayoutItem",
+                      "spec": {
+                        "x": 0,
+                        "y": 18,
+                        "width": 24,
+                        "height": 9,
+                        "element": {
+                          "kind": "ElementReference",
+                          "name": "panel-20"
+                        }
+                      }
+                    },
+                    {
+                      "kind": "GridLayoutItem",
+                      "spec": {
+                        "x": 0,
+                        "y": 27,
+                        "width": 24,
+                        "height": 10,
+                        "element": {
+                          "kind": "ElementReference",
+                          "name": "panel-66"
+                        }
+                      }
+                    }
+                  ]
+                }
+              }
+            }
+          },
+          {
+            "kind": "RowsLayoutRow",
+            "spec": {
+              "title": "JMETER: Errors",
+              "collapse": false,
+              "layout": {
+                "kind": "GridLayout",
+                "spec": {
+                  "items": [
+                    {
+                      "kind": "GridLayoutItem",
+                      "spec": {
+                        "x": 0,
+                        "y": 0,
+                        "width": 24,
+                        "height": 12,
+                        "element": {
+                          "kind": "ElementReference",
+                          "name": "panel-61"
+                        }
+                      }
+                    }
+                  ]
+                }
+              }
+            }
+          }
+        ]
+      }
+    },
+    "links": [
+      {
+        "title": "Main dashboard",
+        "type": "dashboards",
+        "icon": "external link",
+        "tooltip": "",
+        "url": "",
+        "tags": [
+          "main",
+          "sitecore"
+        ],
+        "asDropdown": false,
+        "targetBlank": false,
+        "includeVars": false,
+        "keepTime": false
+      }
+    ],
+    "liveNow": false,
+    "preload": false,
+    "tags": [],
+    "timeSettings": {
+      "timezone": "browser",
+      "from": "2026-10-21T19:34:01.611Z",
+      "to": "2026-10-21T19:55:01.011Z",
+      "autoRefresh": "",
+      "autoRefreshIntervals": [
+        "5s",
+        "10s",
+        "30s",
+        "1m"
+      ],
+      "hideTimepicker": false,
+      "fiscalYearStartMonth": 0
+    },
+    "title": "JMeter test results Influxdb2 Standard Listener",
+    "variables": [
+      {
+        "kind": "QueryVariable",
+        "spec": {
+          "name": "app",
+          "current": {
+            "text": "demo",
+            "value": "demo"
+          },
+          "label": "app",
+          "hide": "dontHide",
+          "refresh": "onDashboardLoad",
+          "skipUrlSync": false,
+          "query": {
+            "kind": "DataQuery",
+            "group": "influxdb",
+            "version": "v0",
+            "datasource": {
+              "name": "cg1m6i42v8e0wd"
+            },
+            "spec": {
+              "0": "i",
+              "1": "m",
+              "2": "p",
+              "3": "o",
+              "4": "r",
+              "5": "t",
+              "6": " ",
+              "7": "\"",
+              "8": "i",
+              "9": "n",
+              "10": "f",
+              "11": "l",
+              "12": "u",
+              "13": "x",
+              "14": "d",
+              "15": "a",
+              "16": "t",
+              "17": "a",
+              "18": "/",
+              "19": "i",
+              "20": "n",
+              "21": "f",
+              "22": "l",
+              "23": "u",
+              "24": "x",
+              "25": "d",
+              "26": "b",
+              "27": "/",
+              "28": "s",
+              "29": "c",
+              "30": "h",
+              "31": "e",
+              "32": "m",
+              "33": "a",
+              "34": "\"",
+              "35": "\r",
+              "36": "\n",
+              "37": "\r",
+              "38": "\n",
+              "39": "s",
+              "40": "c",
+              "41": "h",
+              "42": "e",
+              "43": "m",
+              "44": "a",
+              "45": ".",
+              "46": "t",
+              "47": "a",
+              "48": "g",
+              "49": "V",
+              "50": "a",
+              "51": "l",
+              "52": "u",
+              "53": "e",
+              "54": "s",
+              "55": "(",
+              "56": "\r",
+              "57": "\n",
+              "58": " ",
+              "59": " ",
+              "60": " ",
+              "61": " ",
+              "62": "b",
+              "63": "u",
+              "64": "c",
+              "65": "k",
+              "66": "e",
+              "67": "t",
+              "68": ":",
+              "69": " ",
+              "70": "v",
+              "71": ".",
+              "72": "b",
+              "73": "u",
+              "74": "c",
+              "75": "k",
+              "76": "e",
+              "77": "t",
+              "78": ",",
+              "79": "\r",
+              "80": "\n",
+              "81": " ",
+              "82": " ",
+              "83": " ",
+              "84": " ",
+              "85": "t",
+              "86": "a",
+              "87": "g",
+              "88": ":",
+              "89": " ",
+              "90": "\"",
+              "91": "a",
+              "92": "p",
+              "93": "p",
+              "94": "l",
+              "95": "i",
+              "96": "c",
+              "97": "a",
+              "98": "t",
+              "99": "i",
+              "100": "o",
+              "101": "n",
+              "102": "\"",
+              "103": ",",
+              "104": "\r",
+              "105": "\n",
+              "106": " ",
+              "107": " ",
+              "108": " ",
+              "109": " ",
+              "110": "p",
+              "111": "r",
+              "112": "e",
+              "113": "d",
+              "114": "i",
+              "115": "c",
+              "116": "a",
+              "117": "t",
+              "118": "e",
+              "119": ":",
+              "120": " ",
+              "121": "(",
+              "122": "r",
+              "123": ")",
+              "124": " ",
+              "125": "=",
+              "126": ">",
+              "127": " ",
+              "128": "r",
+              "129": ".",
+              "130": "_",
+              "131": "m",
+              "132": "e",
+              "133": "a",
+              "134": "s",
+              "135": "u",
+              "136": "r",
+              "137": "e",
+              "138": "m",
+              "139": "e",
+              "140": "n",
+              "141": "t",
+              "142": " ",
+              "143": "=",
+              "144": "=",
+              "145": " ",
+              "146": "\"",
+              "147": "e",
+              "148": "v",
+              "149": "e",
+              "150": "n",
+              "151": "t",
+              "152": "s",
+              "153": "\"",
+              "154": ",",
+              "155": "\r",
+              "156": "\n",
+              "157": " ",
+              "158": " ",
+              "159": " ",
+              "160": " ",
+              "161": "s",
+              "162": "t",
+              "163": "a",
+              "164": "r",
+              "165": "t",
+              "166": ":",
+              "167": " ",
+              "168": "0",
+              "169": "\r",
+              "170": "\n",
+              "171": " ",
+              "172": " ",
+              "173": ")",
+              "query": "import \"influxdata/influxdb/schema\"\r\n\r\nschema.tagValues(\r\n    bucket: v.bucket,\r\n    tag: \"application\",\r\n    predicate: (r) => r._measurement == \"events\",\r\n    start: 0\r\n  )"
+            }
+          },
+          "regex": "",
+          "regexApplyTo": "value",
+          "sort": "disabled",
+          "definition": "import \"influxdata/influxdb/schema\"\r\n\r\nschema.tagValues(\r\n    bucket: v.bucket,\r\n    tag: \"application\",\r\n    predicate: (r) => r._measurement == \"events\",\r\n    start: 0\r\n  )",
+          "options": [],
+          "multi": false,
+          "includeAll": false,
+          "allowCustomValue": true
+        }
+      },
+      {
+        "kind": "QueryVariable",
+        "spec": {
+          "name": "testTitle",
+          "current": {
+            "text": "20261021-2231-demo",
+            "value": "20261021-2231-demo"
+          },
+          "label": "testTitle",
+          "hide": "dontHide",
+          "refresh": "onDashboardLoad",
+          "skipUrlSync": false,
+          "query": {
+            "kind": "DataQuery",
+            "group": "influxdb",
+            "version": "v0",
+            "datasource": {
+              "name": "cg1m6i42v8e0wd"
+            },
+            "spec": {
+              "__legacyStringValue": "import \"influxdata/influxdb/schema\"\r\n\r\nschema.tagValues(\r\n    bucket: v.bucket,\r\n    tag: \"testTitle\",\r\n    predicate: (r) => r._measurement == \"events\" and r.application == \"${app}\",\r\n    start: -1000d\r\n  )"
+            }
+          },
+          "regex": "",
+          "regexApplyTo": "value",
+          "sort": "alphabeticalDesc",
+          "definition": "import \"influxdata/influxdb/schema\"\r\n\r\nschema.tagValues(\r\n    bucket: v.bucket,\r\n    tag: \"testTitle\",\r\n    predicate: (r) => r._measurement == \"events\" and r.application == \"${app}\",\r\n    start: -1000d\r\n  )",
+          "options": [],
+          "multi": false,
+          "includeAll": false,
+          "allowCustomValue": true
+        }
+      },
+      {
+        "kind": "CustomVariable",
+        "spec": {
+          "name": "type",
+          "query": "request,transaction",
+          "current": {
+            "text": "request",
+            "value": "request"
+          },
+          "options": [],
+          "multi": false,
+          "includeAll": false,
+          "hide": "dontHide",
+          "skipUrlSync": false,
+          "allowCustomValue": true,
+          "valuesFormat": "csv"
+        }
+      },
+      {
+        "kind": "CustomVariable",
+        "spec": {
+          "name": "aggregation",
+          "query": "5,10,15,30,60",
+          "current": {
+            "text": "60",
+            "value": "60"
+          },
+          "options": [],
+          "multi": false,
+          "includeAll": false,
+          "hide": "dontHide",
+          "skipUrlSync": false,
+          "allowCustomValue": true,
+          "valuesFormat": "csv"
+        }
+      },
+      {
+        "kind": "ConstantVariable",
+        "spec": {
+          "name": "send_interval",
+          "query": "5",
+          "current": {
+            "text": "5",
+            "value": "5"
+          },
+          "hide": "hideVariable",
+          "skipUrlSync": true
+        }
+      },
+      {
+        "kind": "ConstantVariable",
+        "spec": {
+          "name": "transaction_mark",
+          "query": "TR",
+          "current": {
+            "text": "TR",
+            "value": "TR"
+          },
+          "hide": "hideVariable",
+          "skipUrlSync": true
+        }
+      }
+    ]
+  }
+}

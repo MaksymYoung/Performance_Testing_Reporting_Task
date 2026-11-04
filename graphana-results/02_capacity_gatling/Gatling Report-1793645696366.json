@@ -1,0 +1,4786 @@
+{
+  "apiVersion": "dashboard.grafana.app/v2",
+  "kind": "Dashboard",
+  "metadata": {
+    "name": "gatling",
+    "namespace": "default",
+    "uid": "0bf37a86-0111-4844-974f-6d188317889a",
+    "resourceVersion": "1793645660345985",
+    "generation": 116,
+    "creationTimestamp": "2026-10-25T18:49:06Z",
+    "labels": {
+      "grafana.app/deprecatedInternalID": "2240833501978624"
+    },
+    "annotations": {
+      "grafana.app/createdBy": "user:cg0ngdbpgccu8d",
+      "grafana.app/saved-from-ui": "Grafana v13.2.3 (90ffed056f)",
+      "grafana.app/updatedBy": "user:cg0ngdbpgccu8d",
+      "grafana.app/updatedTimestamp": "2026-11-02T18:54:20Z"
+    }
+  },
+  "spec": {
+    "annotations": [
+      {
+        "kind": "AnnotationQuery",
+        "spec": {
+          "query": {
+            "kind": "DataQuery",
+            "group": "grafana",
+            "version": "v0",
+            "spec": {}
+          },
+          "enable": true,
+          "hide": false,
+          "iconColor": "#C4162A",
+          "name": "Annotations & Alerts (LoadTest)",
+          "builtIn": true,
+          "legacyOptions": {
+            "limit": 100,
+            "matchAny": false,
+            "showIn": 0,
+            "tags": [
+              "LoadTest"
+            ]
+          }
+        }
+      }
+    ],
+    "cursorSync": "Off",
+    "description": "Gatling Report",
+    "editable": true,
+    "elements": {
+      "panel-1425": {
+        "kind": "Panel",
+        "spec": {
+          "id": 1425,
+          "title": "Stats",
+          "description": "",
+          "links": [],
+          "data": {
+            "kind": "QueryGroup",
+            "spec": {
+              "queries": [
+                {
+                  "kind": "PanelQuery",
+                  "spec": {
+                    "query": {
+                      "kind": "DataQuery",
+                      "group": "influxdb",
+                      "version": "v0",
+                      "datasource": {
+                        "name": "cg1m62ftcgrnka"
+                      },
+                      "spec": {
+                        "query": "from(bucket: \"gatling\")\r\n  |> range(start: v.timeRangeStart, stop: v.timeRangeStop)\r\n  |> filter(fn: (r) => r[\"_measurement\"] == \"gatling\")\r\n  |> filter(fn: (r) => r[\"simulation\"] == \"PerfTestSimulation_rolling\")\r\n  |> filter(fn: (r) => r[\"request\"] == \"ALL\")\r\n  |> filter(fn: (r) => r[\"_field\"] == \"response_time_p50\")\r\n  |> group(columns: [\"_field\"])\r\n  |> mean()"
+                      }
+                    },
+                    "refId": "A",
+                    "hidden": false
+                  }
+                },
+                {
+                  "kind": "PanelQuery",
+                  "spec": {
+                    "query": {
+                      "kind": "DataQuery",
+                      "group": "influxdb",
+                      "version": "v0",
+                      "datasource": {
+                        "name": "cg1m62ftcgrnka"
+                      },
+                      "spec": {
+                        "query": "from(bucket: \"gatling\")\r\n  |> range(start: v.timeRangeStart, stop: v.timeRangeStop)\r\n  |> filter(fn: (r) => r[\"_measurement\"] == \"gatling\")\r\n  |> filter(fn: (r) => r[\"simulation\"] == \"PerfTestSimulation_rolling\")\r\n  |> filter(fn: (r) => r[\"request\"] == \"ALL\")\r\n  |> filter(fn: (r) => r[\"_field\"] == \"response_time_p90\")\r\n  |> group(columns: [\"_field\"])\r\n  |> mean()"
+                      }
+                    },
+                    "refId": "B",
+                    "hidden": false
+                  }
+                },
+                {
+                  "kind": "PanelQuery",
+                  "spec": {
+                    "query": {
+                      "kind": "DataQuery",
+                      "group": "influxdb",
+                      "version": "v0",
+                      "datasource": {
+                        "name": "cg1m62ftcgrnka"
+                      },
+                      "spec": {
+                        "query": "from(bucket: \"gatling\")\r\n  |> range(start: v.timeRangeStart, stop: v.timeRangeStop)\r\n  |> filter(fn: (r) => r[\"_measurement\"] == \"gatling\")\r\n  |> filter(fn: (r) => r[\"simulation\"] == \"PerfTestSimulation_rolling\")\r\n  |> filter(fn: (r) => r[\"request\"] == \"ALL\")\r\n  |> filter(fn: (r) => r[\"_field\"] == \"response_time_p95\")\r\n  |> group(columns: [\"_field\"])\r\n  |> mean()"
+                      }
+                    },
+                    "refId": "C",
+                    "hidden": false
+                  }
+                },
+                {
+                  "kind": "PanelQuery",
+                  "spec": {
+                    "query": {
+                      "kind": "DataQuery",
+                      "group": "influxdb",
+                      "version": "v0",
+                      "datasource": {
+                        "name": "cg1m62ftcgrnka"
+                      },
+                      "spec": {
+                        "query": "from(bucket: \"gatling\")\r\n  |> range(start: v.timeRangeStart, stop: v.timeRangeStop)\r\n  |> filter(fn: (r) => r[\"_measurement\"] == \"gatling\")\r\n  |> filter(fn: (r) => r[\"simulation\"] == \"PerfTestSimulation\")\r\n  |> filter(fn: (r) => r[\"_field\"] == \"count\")\r\n  |> filter(fn: (r) => r[\"request\"] != \"all\")\r\n  |> keep(columns: [\"_field\", \"_value\", \"_time\"])\r\n  |> aggregateWindow(every: 30s, fn: sum, createEmpty: true)\r\n  |> map(fn: (r) => ({ r with _value: float(v: r._value / float(v: 30)) }))\r\n  |> keep(columns: [\"_value\", \"_field\"])\r\n  |> median(column: \"_value\")\r\n  |> set(key: \"_field\", value: \"RPS\")"
+                      }
+                    },
+                    "refId": "D",
+                    "hidden": false
+                  }
+                },
+                {
+                  "kind": "PanelQuery",
+                  "spec": {
+                    "query": {
+                      "kind": "DataQuery",
+                      "group": "influxdb",
+                      "version": "v0",
+                      "datasource": {
+                        "name": "cg1m62ftcgrnka"
+                      },
+                      "spec": {
+                        "query": "from(bucket: \"gatling\")\r\n  |> range(start: v.timeRangeStart, stop: v.timeRangeStop)\r\n  |> filter(fn: (r) => r[\"_measurement\"] == \"gatling\")\r\n  |> filter(fn: (r) => r[\"simulation\"] == \"PerfTestSimulation\")\r\n  |> filter(fn: (r) => r[\"_field\"] == \"count\")\r\n  |> group(columns: [\"_field\"])\r\n  |> keep(columns: [\"_value\", \"_field\"])\r\n  |> sum(column: \"_value\")\r\n  |> set(key: \"_field\", value: \"Total requests\")"
+                      }
+                    },
+                    "refId": "E",
+                    "hidden": false
+                  }
+                },
+                {
+                  "kind": "PanelQuery",
+                  "spec": {
+                    "query": {
+                      "kind": "DataQuery",
+                      "group": "influxdb",
+                      "version": "v0",
+                      "datasource": {
+                        "name": "cg1m62ftcgrnka"
+                      },
+                      "spec": {
+                        "query": "import \"math\"\r\n\r\nfrom(bucket: \"gatling\")\r\n  |> range(start: v.timeRangeStart, stop: v.timeRangeStop)\r\n  |> filter(fn: (r) => r[\"_measurement\"] == \"gatling\" and r[\"simulation\"] == \"PerfTestSimulation\" and r[\"_field\"] == \"count\")\r\n  |> filter(fn: (r) => r[\"status\"] =~ /^[0-9]{3}$/)\r\n  |> map(fn: (r) => ({\r\n      r with\r\n      status_type: if r[\"status\"] =~ /^[45][0-9]{2}$/ then \"ko\" else \"ok\"\r\n  }))\r\n  |> group(columns: [\"_field\", \"status_type\"])\r\n  |> sum(column: \"_value\")\r\n  |> pivot(rowKey: [\"_field\"], columnKey: [\"status_type\"], valueColumn: \"_value\")\r\n  |> map(fn: (r) => ({\r\n      ok: if exists r.ok then float(v: r.ok) else 0.0,\r\n      ko: if exists r.ko then float(v: r.ko) else 0.0\r\n  }))\r\n  |> map(fn: (r) => ({\r\n      errors: if (r.ok + r.ko) > 0.0\r\n              then math.round(x: r.ko / (r.ok + r.ko) * 100.0 * 100.0) / 100.0\r\n              else 0.0\r\n  }))\r\n  |> keep(columns: [\"errors\"])"
+                      }
+                    },
+                    "refId": "F",
+                    "hidden": false
+                  }
+                }
+              ],
+              "transformations": [],
+              "queryOptions": {}
+            }
+          },
+          "vizConfig": {
+            "kind": "VizConfig",
+            "group": "gauge",
+            "version": "13.2.3",
+            "spec": {
+              "options": {
+                "barShape": "flat",
+                "barWidthFactor": 0.5,
+                "effects": {
+                  "barGlow": false,
+                  "centerGlow": false,
+                  "gradient": false
+                },
+                "endpointMarker": "point",
+                "minVizHeight": 75,
+                "minVizWidth": 75,
+                "orientation": "auto",
+                "reduceOptions": {
+                  "calcs": [
+                    "sum"
+                  ],
+                  "fields": "",
+                  "values": false
+                },
+                "segmentCount": 1,
+                "segmentSpacing": 0.3,
+                "shape": "gauge",
+                "showThresholdLabels": false,
+                "showThresholdMarkers": true,
+                "sizing": "auto",
+                "sparkline": false,
+                "textMode": "auto"
+              },
+              "fieldConfig": {
+                "defaults": {
+                  "unit": "ms",
+                  "thresholds": {
+                    "mode": "absolute",
+                    "steps": [
+                      {
+                        "value": 0,
+                        "color": "green"
+                      }
+                    ]
+                  },
+                  "color": {
+                    "mode": "thresholds"
+                  }
+                },
+                "overrides": [
+                  {
+                    "matcher": {
+                      "id": "byName",
+                      "scope": "series",
+                      "options": "_value Median"
+                    },
+                    "properties": [
+                      {
+                        "id": "displayName",
+                        "value": "Median"
+                      }
+                    ]
+                  },
+                  {
+                    "matcher": {
+                      "id": "byName",
+                      "scope": "series",
+                      "options": "_value pct75"
+                    },
+                    "properties": [
+                      {
+                        "id": "displayName",
+                        "value": "pct75"
+                      }
+                    ]
+                  },
+                  {
+                    "matcher": {
+                      "id": "byName",
+                      "scope": "series",
+                      "options": "_value pct90"
+                    },
+                    "properties": [
+                      {
+                        "id": "displayName",
+                        "value": "pct90"
+                      }
+                    ]
+                  },
+                  {
+                    "matcher": {
+                      "id": "byName",
+                      "scope": "series",
+                      "options": "_value RPS"
+                    },
+                    "properties": [
+                      {
+                        "id": "displayName",
+                        "value": "RPS"
+                      },
+                      {
+                        "id": "unit"
+                      }
+                    ]
+                  },
+                  {
+                    "matcher": {
+                      "id": "byName",
+                      "scope": "series",
+                      "options": "_value Total requests"
+                    },
+                    "properties": [
+                      {
+                        "id": "displayName",
+                        "value": "Total requests"
+                      },
+                      {
+                        "id": "unit"
+                      }
+                    ]
+                  },
+                  {
+                    "matcher": {
+                      "id": "byName",
+                      "scope": "series",
+                      "options": "errors"
+                    },
+                    "properties": [
+                      {
+                        "id": "unit",
+                        "value": "percent"
+                      },
+                      {
+                        "id": "thresholds",
+                        "value": {
+                          "mode": "absolute",
+                          "steps": [
+                            {
+                              "color": "green",
+                              "value": 0
+                            },
+                            {
+                              "color": "red",
+                              "value": 10
+                            }
+                          ]
+                        }
+                      }
+                    ]
+                  },
+                  {
+                    "matcher": {
+                      "id": "byName",
+                      "scope": "series",
+                      "options": "_value {_start=\"2026-10-31 12:53:00 +0000 UTC\", _stop=\"2026-10-31 14:05:00 +0000 UTC\", status=\"500\"}"
+                    },
+                    "properties": [
+                      {
+                        "id": "unit",
+                        "value": "percent"
+                      }
+                    ]
+                  },
+                  {
+                    "matcher": {
+                      "id": "byName",
+                      "scope": "series",
+                      "options": "_value {_field=\"response_time_p50\", _start=\"2026-10-31 18:20:10 +0000 UTC\", _stop=\"2026-10-31 19:41:29 +0000 UTC\"}"
+                    },
+                    "properties": [
+                      {
+                        "id": "displayName",
+                        "value": "median"
+                      }
+                    ]
+                  },
+                  {
+                    "matcher": {
+                      "id": "byName",
+                      "scope": "series",
+                      "options": "_value {_field=\"response_time_p90\", _start=\"2026-10-31 18:20:10 +0000 UTC\", _stop=\"2026-10-31 19:41:29 +0000 UTC\"}"
+                    },
+                    "properties": [
+                      {
+                        "id": "displayName",
+                        "value": "pct90"
+                      }
+                    ]
+                  },
+                  {
+                    "matcher": {
+                      "id": "byName",
+                      "scope": "series",
+                      "options": "_value {_field=\"response_time_p95\", _start=\"2026-10-31 18:20:10 +0000 UTC\", _stop=\"2026-10-31 19:41:29 +0000 UTC\"}"
+                    },
+                    "properties": [
+                      {
+                        "id": "displayName",
+                        "value": "pct95"
+                      }
+                    ]
+                  },
+                  {
+                    "matcher": {
+                      "id": "byName",
+                      "scope": "series",
+                      "options": "_value {_field=\"RPS\"}"
+                    },
+                    "properties": [
+                      {
+                        "id": "displayName",
+                        "value": "RPS"
+                      },
+                      {
+                        "id": "unit",
+                        "value": "reqps"
+                      }
+                    ]
+                  },
+                  {
+                    "matcher": {
+                      "id": "byName",
+                      "scope": "series",
+                      "options": "_value {_field=\"Total requests\"}"
+                    },
+                    "properties": [
+                      {
+                        "id": "displayName",
+                        "value": "Total Requests"
+                      },
+                      {
+                        "id": "unit"
+                      }
+                    ]
+                  }
+                ]
+              }
+            }
+          }
+        }
+      },
+      "panel-1426": {
+        "kind": "Panel",
+        "spec": {
+          "id": 1426,
+          "title": "Total Throughput (RPS)",
+          "description": "",
+          "links": [],
+          "data": {
+            "kind": "QueryGroup",
+            "spec": {
+              "queries": [
+                {
+                  "kind": "PanelQuery",
+                  "spec": {
+                    "query": {
+                      "kind": "DataQuery",
+                      "group": "influxdb",
+                      "version": "v0",
+                      "datasource": {
+                        "name": "dg2bgucafjjeoe"
+                      },
+                      "spec": {
+                        "query": "import \"date\"\r\n\r\nwindowEvery = 30s\r\n\r\nfrom(bucket: \"gatling\")\r\n  |> range(start: v.timeRangeStart, stop: date.sub(from: v.timeRangeStop, d: windowEvery))\r\n  |> filter(fn: (r) => r[\"_measurement\"] == \"gatling\")\r\n  |> filter(fn: (r) => r[\"simulation\"] == \"PerfTestSimulation\")\r\n  |> filter(fn: (r) => r[\"_field\"] == \"count\")\r\n  |> group(columns: [\"_measurement\", \"simulation\", \"_field\"])\r\n  |> aggregateWindow(every: windowEvery, fn: sum, createEmpty: false)\r\n  |> map(fn: (r) => ({ r with _value: float(v: r._value) / (float(v: int(v: windowEvery)) / 1000000000.0) }))\r\n  |> set(key: \"_field\", value: \"Total Throughput (RPS)\")"
+                      }
+                    },
+                    "refId": "A",
+                    "hidden": false
+                  }
+                }
+              ],
+              "transformations": [],
+              "queryOptions": {}
+            }
+          },
+          "vizConfig": {
+            "kind": "VizConfig",
+            "group": "timeseries",
+            "version": "13.2.3",
+            "spec": {
+              "options": {
+                "legend": {
+                  "calcs": [],
+                  "displayMode": "list",
+                  "placement": "bottom",
+                  "showLegend": true
+                },
+                "tooltip": {
+                  "hideZeros": false,
+                  "mode": "single",
+                  "sort": "none"
+                }
+              },
+              "fieldConfig": {
+                "defaults": {
+                  "unit": "reqps",
+                  "thresholds": {
+                    "mode": "absolute",
+                    "steps": [
+                      {
+                        "value": 0,
+                        "color": "green"
+                      }
+                    ]
+                  },
+                  "color": {
+                    "mode": "palette-classic"
+                  },
+                  "custom": {
+                    "axisBorderShow": false,
+                    "axisCenteredZero": false,
+                    "axisColorMode": "text",
+                    "axisLabel": "",
+                    "axisPlacement": "auto",
+                    "barAlignment": 0,
+                    "barWidthFactor": 0.6,
+                    "drawStyle": "line",
+                    "fillOpacity": 0,
+                    "gradientMode": "none",
+                    "hideFrom": {
+                      "legend": false,
+                      "tooltip": false,
+                      "viz": false
+                    },
+                    "insertNulls": false,
+                    "lineInterpolation": "linear",
+                    "lineWidth": 1,
+                    "pointSize": 5,
+                    "scaleDistribution": {
+                      "type": "linear"
+                    },
+                    "showPoints": "auto",
+                    "showValues": false,
+                    "spanNulls": false,
+                    "stacking": {
+                      "group": "A",
+                      "mode": "none"
+                    },
+                    "thresholdsStyle": {
+                      "mode": "off"
+                    }
+                  }
+                },
+                "overrides": [
+                  {
+                    "matcher": {
+                      "id": "byName",
+                      "scope": "series",
+                      "options": "Total Throughput (RPS) PerfTestSimulation"
+                    },
+                    "properties": [
+                      {
+                        "id": "displayName",
+                        "value": "Total Throughput (RPS)"
+                      }
+                    ]
+                  }
+                ]
+              }
+            }
+          }
+        }
+      },
+      "panel-1428": {
+        "kind": "Panel",
+        "spec": {
+          "id": 1428,
+          "title": "Throughput (RPS) per request",
+          "description": "",
+          "links": [],
+          "data": {
+            "kind": "QueryGroup",
+            "spec": {
+              "queries": [
+                {
+                  "kind": "PanelQuery",
+                  "spec": {
+                    "query": {
+                      "kind": "DataQuery",
+                      "group": "influxdb",
+                      "version": "v0",
+                      "datasource": {
+                        "name": "dg2bgucafjjeoe"
+                      },
+                      "spec": {
+                        "query": "import \"date\"\r\n\r\nwindowEvery = 30s\r\n\r\nfrom(bucket: \"gatling\")\r\n  |> range(start: v.timeRangeStart, stop: date.sub(from: v.timeRangeStop, d: windowEvery))\r\n  |> filter(fn: (r) => r[\"_measurement\"] == \"gatling\")\r\n  |> filter(fn: (r) => r[\"simulation\"] == \"PerfTestSimulation\")\r\n  |> filter(fn: (r) => r[\"_field\"] == \"count\")\r\n  |> group(columns: [\"_measurement\", \"simulation\", \"_field\", \"host\", \"request\"])\r\n  |> aggregateWindow(every: windowEvery, fn: sum, createEmpty: false)\r\n  |> map(fn: (r) => ({ r with _value: float(v: r._value) / (float(v: int(v: windowEvery)) / 1000000000.0) }))\r\n  |> set(key: \"_field\", value: \"Total Throughput (RPS)\")"
+                      }
+                    },
+                    "refId": "A",
+                    "hidden": false
+                  }
+                }
+              ],
+              "transformations": [],
+              "queryOptions": {}
+            }
+          },
+          "vizConfig": {
+            "kind": "VizConfig",
+            "group": "timeseries",
+            "version": "13.2.3",
+            "spec": {
+              "options": {
+                "legend": {
+                  "calcs": [],
+                  "displayMode": "list",
+                  "placement": "bottom",
+                  "showLegend": true
+                },
+                "tooltip": {
+                  "hideZeros": false,
+                  "mode": "single",
+                  "sort": "none"
+                }
+              },
+              "fieldConfig": {
+                "defaults": {
+                  "thresholds": {
+                    "mode": "absolute",
+                    "steps": [
+                      {
+                        "value": 0,
+                        "color": "green"
+                      }
+                    ]
+                  },
+                  "color": {
+                    "mode": "palette-classic"
+                  },
+                  "custom": {
+                    "axisBorderShow": false,
+                    "axisCenteredZero": false,
+                    "axisColorMode": "text",
+                    "axisLabel": "",
+                    "axisPlacement": "auto",
+                    "barAlignment": 0,
+                    "barWidthFactor": 0.6,
+                    "drawStyle": "line",
+                    "fillOpacity": 0,
+                    "gradientMode": "none",
+                    "hideFrom": {
+                      "legend": false,
+                      "tooltip": false,
+                      "viz": false
+                    },
+                    "insertNulls": false,
+                    "lineInterpolation": "linear",
+                    "lineWidth": 1,
+                    "pointSize": 5,
+                    "scaleDistribution": {
+                      "type": "linear"
+                    },
+                    "showPoints": "auto",
+                    "showValues": false,
+                    "spanNulls": false,
+                    "stacking": {
+                      "group": "A",
+                      "mode": "none"
+                    },
+                    "thresholdsStyle": {
+                      "mode": "off"
+                    }
+                  }
+                },
+                "overrides": [
+                  {
+                    "matcher": {
+                      "id": "byName",
+                      "scope": "series",
+                      "options": "Total Throughput (RPS)"
+                    },
+                    "properties": [
+                      {
+                        "id": "unit",
+                        "value": "reqps"
+                      }
+                    ]
+                  },
+                  {
+                    "matcher": {
+                      "id": "byName",
+                      "options": "Total Throughput (RPS) {host=\"DESKTOP-QQQOPDE\", request=\"003_Tables\", simulation=\"PerfTestSimulation\"}"
+                    },
+                    "properties": [
+                      {
+                        "id": "color",
+                        "value": {
+                          "fixedColor": "super-light-blue",
+                          "mode": "fixed"
+                        }
+                      }
+                    ]
+                  },
+                  {
+                    "matcher": {
+                      "id": "byName",
+                      "options": "Total Throughput (RPS) {host=\"DESKTOP-QQQOPDE\", request=\"008_Cart\", simulation=\"PerfTestSimulation\"}"
+                    },
+                    "properties": [
+                      {
+                        "id": "color",
+                        "value": {
+                          "fixedColor": "super-light-green",
+                          "mode": "fixed"
+                        }
+                      }
+                    ]
+                  }
+                ]
+              }
+            }
+          }
+        }
+      },
+      "panel-1431": {
+        "kind": "Panel",
+        "spec": {
+          "id": 1431,
+          "title": "pct90 Response Time per request",
+          "description": "",
+          "links": [],
+          "data": {
+            "kind": "QueryGroup",
+            "spec": {
+              "queries": [
+                {
+                  "kind": "PanelQuery",
+                  "spec": {
+                    "query": {
+                      "kind": "DataQuery",
+                      "group": "influxdb",
+                      "version": "v0",
+                      "datasource": {
+                        "name": "$ds"
+                      },
+                      "spec": {
+                        "alias": "$col",
+                        "dsType": "influxdb",
+                        "fields": [
+                          {
+                            "func": "mean",
+                            "name": "value"
+                          }
+                        ],
+                        "groupBy": [
+                          {
+                            "params": [
+                              "$g"
+                            ],
+                            "type": "time"
+                          },
+                          {
+                            "params": [
+                              "simulation"
+                            ],
+                            "type": "tag"
+                          },
+                          {
+                            "params": [
+                              "null"
+                            ],
+                            "type": "fill"
+                          }
+                        ],
+                        "measurement": "gatling",
+                        "orderByTime": "ASC",
+                        "policy": "default",
+                        "query": "from(bucket: \"gatling\")\r\n  |> range(start: v.timeRangeStart, stop: v.timeRangeStop)\r\n  |> filter(fn: (r) => r[\"_measurement\"] == \"gatling\")\r\n  |> filter(fn: (r) => r[\"simulation\"] == \"PerfTestSimulation\")\r\n  |> filter(fn: (r) => r[\"_field\"] == \"response_time\")\r\n  |> group(columns: [\"_measurement\", \"simulation\", \"_field\", \"host\", \"request\", \"Name\"])\r\n  |> aggregateWindow(\r\n      every: 30s,\r\n      fn: (tables=<-, column) =>\r\n          tables\r\n            |> quantile(\r\n                q: 0.9,\r\n                method: \"estimate_tdigest\",\r\n                compression: 1000.0\r\n            ),\r\n      createEmpty: false\r\n  )\r\n  |> yield(name: \"pct90\")",
+                        "rawQuery": true,
+                        "resultFormat": "time_series",
+                        "select": [
+                          [
+                            {
+                              "params": [
+                                "percentiles50"
+                              ],
+                              "type": "field"
+                            },
+                            {
+                              "params": [
+                                "50"
+                              ],
+                              "type": "percentile"
+                            },
+                            {
+                              "params": [
+                                "50%"
+                              ],
+                              "type": "alias"
+                            }
+                          ],
+                          [
+                            {
+                              "params": [
+                                "percentiles95"
+                              ],
+                              "type": "field"
+                            },
+                            {
+                              "params": [
+                                "95"
+                              ],
+                              "type": "percentile"
+                            },
+                            {
+                              "params": [
+                                "95%"
+                              ],
+                              "type": "alias"
+                            }
+                          ],
+                          [
+                            {
+                              "params": [
+                                "percentiles99"
+                              ],
+                              "type": "field"
+                            },
+                            {
+                              "params": [
+                                "99"
+                              ],
+                              "type": "percentile"
+                            },
+                            {
+                              "params": [
+                                "99%"
+                              ],
+                              "type": "alias"
+                            }
+                          ],
+                          [
+                            {
+                              "params": [
+                                "max"
+                              ],
+                              "type": "field"
+                            },
+                            {
+                              "params": [],
+                              "type": "max"
+                            },
+                            {
+                              "params": [
+                                "max"
+                              ],
+                              "type": "alias"
+                            }
+                          ],
+                          [
+                            {
+                              "params": [
+                                "percentiles75"
+                              ],
+                              "type": "field"
+                            },
+                            {
+                              "params": [
+                                "75"
+                              ],
+                              "type": "percentile"
+                            },
+                            {
+                              "params": [
+                                "75%"
+                              ],
+                              "type": "alias"
+                            }
+                          ],
+                          [
+                            {
+                              "params": [
+                                "min"
+                              ],
+                              "type": "field"
+                            },
+                            {
+                              "params": [],
+                              "type": "min"
+                            },
+                            {
+                              "params": [
+                                "min"
+                              ],
+                              "type": "alias"
+                            }
+                          ]
+                        ],
+                        "tags": [
+                          {
+                            "key": "request",
+                            "operator": "=",
+                            "value": "allRequests"
+                          },
+                          {
+                            "condition": "AND",
+                            "key": "status",
+                            "operator": "=",
+                            "value": "ok"
+                          },
+                          {
+                            "condition": "AND",
+                            "key": "simulation",
+                            "operator": "=~",
+                            "value": "/^$simulation$/"
+                          }
+                        ]
+                      }
+                    },
+                    "refId": "A",
+                    "hidden": false
+                  }
+                }
+              ],
+              "transformations": [],
+              "queryOptions": {
+                "interval": "10s"
+              }
+            }
+          },
+          "vizConfig": {
+            "kind": "VizConfig",
+            "group": "timeseries",
+            "version": "13.2.3",
+            "spec": {
+              "options": {
+                "dataLinks": [],
+                "legend": {
+                  "calcs": [],
+                  "displayMode": "table",
+                  "placement": "right",
+                  "showLegend": true
+                },
+                "tooltip": {
+                  "hideZeros": false,
+                  "mode": "multi",
+                  "sort": "none"
+                }
+              },
+              "fieldConfig": {
+                "defaults": {
+                  "unit": "ms",
+                  "min": 0,
+                  "thresholds": {
+                    "mode": "absolute",
+                    "steps": [
+                      {
+                        "value": 0,
+                        "color": "green"
+                      },
+                      {
+                        "value": 80,
+                        "color": "red"
+                      }
+                    ]
+                  },
+                  "color": {
+                    "mode": "palette-classic"
+                  },
+                  "custom": {
+                    "axisBorderShow": false,
+                    "axisCenteredZero": false,
+                    "axisColorMode": "text",
+                    "axisLabel": "",
+                    "axisPlacement": "auto",
+                    "barAlignment": 0,
+                    "barWidthFactor": 0.6,
+                    "drawStyle": "line",
+                    "fillOpacity": 0,
+                    "gradientMode": "none",
+                    "hideFrom": {
+                      "legend": false,
+                      "tooltip": false,
+                      "viz": false
+                    },
+                    "insertNulls": false,
+                    "lineInterpolation": "linear",
+                    "lineWidth": 1,
+                    "pointSize": 5,
+                    "scaleDistribution": {
+                      "type": "linear"
+                    },
+                    "showPoints": "auto",
+                    "showValues": false,
+                    "spanNulls": false,
+                    "stacking": {
+                      "group": "A",
+                      "mode": "none"
+                    },
+                    "thresholdsStyle": {
+                      "mode": "off"
+                    }
+                  }
+                },
+                "overrides": [
+                  {
+                    "matcher": {
+                      "id": "byName",
+                      "options": "min"
+                    },
+                    "properties": [
+                      {
+                        "id": "color",
+                        "value": {
+                          "fixedColor": "#C4FD90",
+                          "mode": "fixed"
+                        }
+                      }
+                    ]
+                  },
+                  {
+                    "matcher": {
+                      "id": "byName",
+                      "options": "50%"
+                    },
+                    "properties": [
+                      {
+                        "id": "color",
+                        "value": {
+                          "fixedColor": "#6FF2AD",
+                          "mode": "fixed"
+                        }
+                      }
+                    ]
+                  },
+                  {
+                    "matcher": {
+                      "id": "byName",
+                      "options": "75%"
+                    },
+                    "properties": [
+                      {
+                        "id": "color",
+                        "value": {
+                          "fixedColor": "#60ECE5",
+                          "mode": "fixed"
+                        }
+                      }
+                    ]
+                  },
+                  {
+                    "matcher": {
+                      "id": "byName",
+                      "options": "95%"
+                    },
+                    "properties": [
+                      {
+                        "id": "color",
+                        "value": {
+                          "fixedColor": "#BC28D7",
+                          "mode": "fixed"
+                        }
+                      }
+                    ]
+                  },
+                  {
+                    "matcher": {
+                      "id": "byName",
+                      "options": "99%"
+                    },
+                    "properties": [
+                      {
+                        "id": "color",
+                        "value": {
+                          "fixedColor": "#D11C97",
+                          "mode": "fixed"
+                        }
+                      }
+                    ]
+                  },
+                  {
+                    "matcher": {
+                      "id": "byName",
+                      "options": "max"
+                    },
+                    "properties": [
+                      {
+                        "id": "color",
+                        "value": {
+                          "fixedColor": "#C73905",
+                          "mode": "fixed"
+                        }
+                      }
+                    ]
+                  },
+                  {
+                    "matcher": {
+                      "id": "byName",
+                      "options": "Active Users"
+                    },
+                    "properties": [
+                      {
+                        "id": "color",
+                        "value": {
+                          "fixedColor": "#FF9D00",
+                          "mode": "fixed"
+                        }
+                      },
+                      {
+                        "id": "custom.fillOpacity",
+                        "value": 0
+                      },
+                      {
+                        "id": "custom.lineWidth",
+                        "value": 4
+                      },
+                      {
+                        "id": "unit",
+                        "value": "none"
+                      },
+                      {
+                        "id": "custom.axisPlacement",
+                        "value": "right"
+                      },
+                      {
+                        "id": "custom.axisLabel",
+                        "value": "Active Users"
+                      }
+                    ]
+                  },
+                  {
+                    "matcher": {
+                      "id": "byName",
+                      "options": "min"
+                    },
+                    "properties": [
+                      {
+                        "id": "color",
+                        "value": {
+                          "fixedColor": "#C4FD90",
+                          "mode": "fixed"
+                        }
+                      }
+                    ]
+                  },
+                  {
+                    "matcher": {
+                      "id": "byName",
+                      "options": "50%"
+                    },
+                    "properties": [
+                      {
+                        "id": "color",
+                        "value": {
+                          "fixedColor": "#6FF2AD",
+                          "mode": "fixed"
+                        }
+                      }
+                    ]
+                  },
+                  {
+                    "matcher": {
+                      "id": "byName",
+                      "options": "75%"
+                    },
+                    "properties": [
+                      {
+                        "id": "color",
+                        "value": {
+                          "fixedColor": "#60ECE5",
+                          "mode": "fixed"
+                        }
+                      }
+                    ]
+                  },
+                  {
+                    "matcher": {
+                      "id": "byName",
+                      "options": "95%"
+                    },
+                    "properties": [
+                      {
+                        "id": "color",
+                        "value": {
+                          "fixedColor": "#BC28D7",
+                          "mode": "fixed"
+                        }
+                      }
+                    ]
+                  },
+                  {
+                    "matcher": {
+                      "id": "byName",
+                      "options": "99%"
+                    },
+                    "properties": [
+                      {
+                        "id": "color",
+                        "value": {
+                          "fixedColor": "#D11C97",
+                          "mode": "fixed"
+                        }
+                      }
+                    ]
+                  },
+                  {
+                    "matcher": {
+                      "id": "byName",
+                      "options": "max"
+                    },
+                    "properties": [
+                      {
+                        "id": "color",
+                        "value": {
+                          "fixedColor": "#C73905",
+                          "mode": "fixed"
+                        }
+                      }
+                    ]
+                  },
+                  {
+                    "matcher": {
+                      "id": "byName",
+                      "options": "Active Users"
+                    },
+                    "properties": [
+                      {
+                        "id": "color",
+                        "value": {
+                          "fixedColor": "#FF9D00",
+                          "mode": "fixed"
+                        }
+                      },
+                      {
+                        "id": "custom.fillOpacity",
+                        "value": 0
+                      },
+                      {
+                        "id": "custom.lineWidth",
+                        "value": 4
+                      },
+                      {
+                        "id": "unit",
+                        "value": "none"
+                      },
+                      {
+                        "id": "custom.axisPlacement",
+                        "value": "right"
+                      },
+                      {
+                        "id": "custom.axisLabel",
+                        "value": "Active Users"
+                      }
+                    ]
+                  },
+                  {
+                    "matcher": {
+                      "id": "byName",
+                      "options": "min"
+                    },
+                    "properties": [
+                      {
+                        "id": "color",
+                        "value": {
+                          "fixedColor": "#C4FD90",
+                          "mode": "fixed"
+                        }
+                      }
+                    ]
+                  },
+                  {
+                    "matcher": {
+                      "id": "byName",
+                      "options": "50%"
+                    },
+                    "properties": [
+                      {
+                        "id": "color",
+                        "value": {
+                          "fixedColor": "#6FF2AD",
+                          "mode": "fixed"
+                        }
+                      }
+                    ]
+                  },
+                  {
+                    "matcher": {
+                      "id": "byName",
+                      "options": "75%"
+                    },
+                    "properties": [
+                      {
+                        "id": "color",
+                        "value": {
+                          "fixedColor": "#60ECE5",
+                          "mode": "fixed"
+                        }
+                      }
+                    ]
+                  },
+                  {
+                    "matcher": {
+                      "id": "byName",
+                      "options": "95%"
+                    },
+                    "properties": [
+                      {
+                        "id": "color",
+                        "value": {
+                          "fixedColor": "#BC28D7",
+                          "mode": "fixed"
+                        }
+                      }
+                    ]
+                  },
+                  {
+                    "matcher": {
+                      "id": "byName",
+                      "options": "99%"
+                    },
+                    "properties": [
+                      {
+                        "id": "color",
+                        "value": {
+                          "fixedColor": "#D11C97",
+                          "mode": "fixed"
+                        }
+                      }
+                    ]
+                  },
+                  {
+                    "matcher": {
+                      "id": "byName",
+                      "options": "max"
+                    },
+                    "properties": [
+                      {
+                        "id": "color",
+                        "value": {
+                          "fixedColor": "#C73905",
+                          "mode": "fixed"
+                        }
+                      }
+                    ]
+                  },
+                  {
+                    "matcher": {
+                      "id": "byName",
+                      "options": "Active Users"
+                    },
+                    "properties": [
+                      {
+                        "id": "color",
+                        "value": {
+                          "fixedColor": "#FF9D00",
+                          "mode": "fixed"
+                        }
+                      },
+                      {
+                        "id": "custom.fillOpacity",
+                        "value": 0
+                      },
+                      {
+                        "id": "custom.lineWidth",
+                        "value": 4
+                      },
+                      {
+                        "id": "unit",
+                        "value": "none"
+                      },
+                      {
+                        "id": "custom.axisPlacement",
+                        "value": "right"
+                      },
+                      {
+                        "id": "custom.axisLabel",
+                        "value": "Active Users"
+                      }
+                    ]
+                  },
+                  {
+                    "matcher": {
+                      "id": "byName",
+                      "options": "min"
+                    },
+                    "properties": [
+                      {
+                        "id": "color",
+                        "value": {
+                          "fixedColor": "#C4FD90",
+                          "mode": "fixed"
+                        }
+                      }
+                    ]
+                  },
+                  {
+                    "matcher": {
+                      "id": "byName",
+                      "options": "50%"
+                    },
+                    "properties": [
+                      {
+                        "id": "color",
+                        "value": {
+                          "fixedColor": "#6FF2AD",
+                          "mode": "fixed"
+                        }
+                      }
+                    ]
+                  },
+                  {
+                    "matcher": {
+                      "id": "byName",
+                      "options": "75%"
+                    },
+                    "properties": [
+                      {
+                        "id": "color",
+                        "value": {
+                          "fixedColor": "#60ECE5",
+                          "mode": "fixed"
+                        }
+                      }
+                    ]
+                  },
+                  {
+                    "matcher": {
+                      "id": "byName",
+                      "options": "95%"
+                    },
+                    "properties": [
+                      {
+                        "id": "color",
+                        "value": {
+                          "fixedColor": "#BC28D7",
+                          "mode": "fixed"
+                        }
+                      }
+                    ]
+                  },
+                  {
+                    "matcher": {
+                      "id": "byName",
+                      "options": "99%"
+                    },
+                    "properties": [
+                      {
+                        "id": "color",
+                        "value": {
+                          "fixedColor": "#D11C97",
+                          "mode": "fixed"
+                        }
+                      }
+                    ]
+                  },
+                  {
+                    "matcher": {
+                      "id": "byName",
+                      "options": "max"
+                    },
+                    "properties": [
+                      {
+                        "id": "color",
+                        "value": {
+                          "fixedColor": "#C73905",
+                          "mode": "fixed"
+                        }
+                      }
+                    ]
+                  },
+                  {
+                    "matcher": {
+                      "id": "byName",
+                      "options": "Active Users"
+                    },
+                    "properties": [
+                      {
+                        "id": "color",
+                        "value": {
+                          "fixedColor": "#FF9D00",
+                          "mode": "fixed"
+                        }
+                      },
+                      {
+                        "id": "custom.fillOpacity",
+                        "value": 0
+                      },
+                      {
+                        "id": "custom.lineWidth",
+                        "value": 4
+                      },
+                      {
+                        "id": "unit",
+                        "value": "none"
+                      },
+                      {
+                        "id": "custom.axisPlacement",
+                        "value": "right"
+                      },
+                      {
+                        "id": "custom.axisLabel",
+                        "value": "Active Users"
+                      }
+                    ]
+                  },
+                  {
+                    "matcher": {
+                      "id": "byName",
+                      "options": "response_time PerfTestSimulation"
+                    },
+                    "properties": [
+                      {
+                        "id": "color",
+                        "value": {
+                          "fixedColor": "light-purple",
+                          "mode": "fixed"
+                        }
+                      }
+                    ]
+                  },
+                  {
+                    "matcher": {
+                      "id": "byName",
+                      "options": "min"
+                    },
+                    "properties": [
+                      {
+                        "id": "color",
+                        "value": {
+                          "fixedColor": "#C4FD90",
+                          "mode": "fixed"
+                        }
+                      }
+                    ]
+                  },
+                  {
+                    "matcher": {
+                      "id": "byName",
+                      "options": "50%"
+                    },
+                    "properties": [
+                      {
+                        "id": "color",
+                        "value": {
+                          "fixedColor": "#6FF2AD",
+                          "mode": "fixed"
+                        }
+                      }
+                    ]
+                  },
+                  {
+                    "matcher": {
+                      "id": "byName",
+                      "options": "75%"
+                    },
+                    "properties": [
+                      {
+                        "id": "color",
+                        "value": {
+                          "fixedColor": "#60ECE5",
+                          "mode": "fixed"
+                        }
+                      }
+                    ]
+                  },
+                  {
+                    "matcher": {
+                      "id": "byName",
+                      "options": "95%"
+                    },
+                    "properties": [
+                      {
+                        "id": "color",
+                        "value": {
+                          "fixedColor": "#BC28D7",
+                          "mode": "fixed"
+                        }
+                      }
+                    ]
+                  },
+                  {
+                    "matcher": {
+                      "id": "byName",
+                      "options": "99%"
+                    },
+                    "properties": [
+                      {
+                        "id": "color",
+                        "value": {
+                          "fixedColor": "#D11C97",
+                          "mode": "fixed"
+                        }
+                      }
+                    ]
+                  },
+                  {
+                    "matcher": {
+                      "id": "byName",
+                      "options": "max"
+                    },
+                    "properties": [
+                      {
+                        "id": "color",
+                        "value": {
+                          "fixedColor": "#C73905",
+                          "mode": "fixed"
+                        }
+                      }
+                    ]
+                  },
+                  {
+                    "matcher": {
+                      "id": "byName",
+                      "options": "Active Users"
+                    },
+                    "properties": [
+                      {
+                        "id": "color",
+                        "value": {
+                          "fixedColor": "#FF9D00",
+                          "mode": "fixed"
+                        }
+                      },
+                      {
+                        "id": "custom.fillOpacity",
+                        "value": 0
+                      },
+                      {
+                        "id": "custom.lineWidth",
+                        "value": 4
+                      },
+                      {
+                        "id": "unit",
+                        "value": "none"
+                      },
+                      {
+                        "id": "custom.axisPlacement",
+                        "value": "right"
+                      },
+                      {
+                        "id": "custom.axisLabel",
+                        "value": "Active Users"
+                      }
+                    ]
+                  },
+                  {
+                    "matcher": {
+                      "id": "byName",
+                      "options": "min"
+                    },
+                    "properties": [
+                      {
+                        "id": "color",
+                        "value": {
+                          "fixedColor": "#C4FD90",
+                          "mode": "fixed"
+                        }
+                      }
+                    ]
+                  },
+                  {
+                    "matcher": {
+                      "id": "byName",
+                      "options": "50%"
+                    },
+                    "properties": [
+                      {
+                        "id": "color",
+                        "value": {
+                          "fixedColor": "#6FF2AD",
+                          "mode": "fixed"
+                        }
+                      }
+                    ]
+                  },
+                  {
+                    "matcher": {
+                      "id": "byName",
+                      "options": "75%"
+                    },
+                    "properties": [
+                      {
+                        "id": "color",
+                        "value": {
+                          "fixedColor": "#60ECE5",
+                          "mode": "fixed"
+                        }
+                      }
+                    ]
+                  },
+                  {
+                    "matcher": {
+                      "id": "byName",
+                      "options": "95%"
+                    },
+                    "properties": [
+                      {
+                        "id": "color",
+                        "value": {
+                          "fixedColor": "#BC28D7",
+                          "mode": "fixed"
+                        }
+                      }
+                    ]
+                  },
+                  {
+                    "matcher": {
+                      "id": "byName",
+                      "options": "99%"
+                    },
+                    "properties": [
+                      {
+                        "id": "color",
+                        "value": {
+                          "fixedColor": "#D11C97",
+                          "mode": "fixed"
+                        }
+                      }
+                    ]
+                  },
+                  {
+                    "matcher": {
+                      "id": "byName",
+                      "options": "max"
+                    },
+                    "properties": [
+                      {
+                        "id": "color",
+                        "value": {
+                          "fixedColor": "#C73905",
+                          "mode": "fixed"
+                        }
+                      }
+                    ]
+                  },
+                  {
+                    "matcher": {
+                      "id": "byName",
+                      "options": "Active Users"
+                    },
+                    "properties": [
+                      {
+                        "id": "color",
+                        "value": {
+                          "fixedColor": "#FF9D00",
+                          "mode": "fixed"
+                        }
+                      },
+                      {
+                        "id": "custom.fillOpacity",
+                        "value": 0
+                      },
+                      {
+                        "id": "custom.lineWidth",
+                        "value": 4
+                      },
+                      {
+                        "id": "unit",
+                        "value": "none"
+                      },
+                      {
+                        "id": "custom.axisPlacement",
+                        "value": "right"
+                      },
+                      {
+                        "id": "custom.axisLabel",
+                        "value": "Active Users"
+                      }
+                    ]
+                  },
+                  {
+                    "matcher": {
+                      "id": "byName",
+                      "options": "response_time {host=\"DESKTOP-QQQOPDE\", request=\"005_Category\", simulation=\"PerfTestSimulation\"}"
+                    },
+                    "properties": [
+                      {
+                        "id": "color",
+                        "value": {
+                          "fixedColor": "super-light-red",
+                          "mode": "fixed"
+                        }
+                      }
+                    ]
+                  },
+                  {
+                    "matcher": {
+                      "id": "byName",
+                      "options": "response_time {host=\"DESKTOP-QQQOPDE\", request=\"008_Cart\", simulation=\"PerfTestSimulation\"}"
+                    },
+                    "properties": [
+                      {
+                        "id": "color",
+                        "value": {
+                          "fixedColor": "super-light-yellow",
+                          "mode": "fixed"
+                        }
+                      }
+                    ]
+                  },
+                  {
+                    "matcher": {
+                      "id": "byName",
+                      "options": "response_time {host=\"DESKTOP-QQQOPDE\", request=\"004_Tables_\", simulation=\"PerfTestSimulation\"}"
+                    },
+                    "properties": [
+                      {
+                        "id": "color",
+                        "value": {
+                          "fixedColor": "super-light-orange",
+                          "mode": "fixed"
+                        }
+                      }
+                    ]
+                  },
+                  {
+                    "matcher": {
+                      "id": "byName",
+                      "scope": "series",
+                      "options": "response_time {host=\"DESKTOP-QQQOPDE\", request=\"001_HomePage\", simulation=\"PerfTestSimulation\"}"
+                    },
+                    "properties": [
+                      {
+                        "id": "displayName",
+                        "value": "001_HomePage"
+                      }
+                    ]
+                  },
+                  {
+                    "matcher": {
+                      "id": "byName",
+                      "scope": "series",
+                      "options": "response_time {host=\"DESKTOP-QQQOPDE\", request=\"002_Category\", simulation=\"PerfTestSimulation\"}"
+                    },
+                    "properties": [
+                      {
+                        "id": "displayName",
+                        "value": "002_Category"
+                      }
+                    ]
+                  },
+                  {
+                    "matcher": {
+                      "id": "byName",
+                      "scope": "series",
+                      "options": "response_time {host=\"DESKTOP-QQQOPDE\", request=\"003_Tables\", simulation=\"PerfTestSimulation\"}"
+                    },
+                    "properties": [
+                      {
+                        "id": "displayName",
+                        "value": "003_Tables"
+                      }
+                    ]
+                  },
+                  {
+                    "matcher": {
+                      "id": "byName",
+                      "scope": "series",
+                      "options": "response_time {host=\"DESKTOP-QQQOPDE\", request=\"004_Tables_\", simulation=\"PerfTestSimulation\"}"
+                    },
+                    "properties": [
+                      {
+                        "id": "displayName",
+                        "value": "004_Tables_addToCart"
+                      }
+                    ]
+                  },
+                  {
+                    "matcher": {
+                      "id": "byName",
+                      "scope": "series",
+                      "options": "response_time {host=\"DESKTOP-QQQOPDE\", request=\"005_Category\", simulation=\"PerfTestSimulation\"}"
+                    },
+                    "properties": [
+                      {
+                        "id": "displayName",
+                        "value": "005_Category"
+                      }
+                    ]
+                  },
+                  {
+                    "matcher": {
+                      "id": "byName",
+                      "scope": "series",
+                      "options": "response_time {host=\"DESKTOP-QQQOPDE\", request=\"006_Chairs\", simulation=\"PerfTestSimulation\"}"
+                    },
+                    "properties": [
+                      {
+                        "id": "displayName",
+                        "value": "006_Chairs"
+                      }
+                    ]
+                  },
+                  {
+                    "matcher": {
+                      "id": "byName",
+                      "scope": "series",
+                      "options": "response_time {host=\"DESKTOP-QQQOPDE\", request=\"007_Chairs_\", simulation=\"PerfTestSimulation\"}"
+                    },
+                    "properties": [
+                      {
+                        "id": "displayName",
+                        "value": "007_Chairs_addToCart"
+                      }
+                    ]
+                  },
+                  {
+                    "matcher": {
+                      "id": "byName",
+                      "scope": "series",
+                      "options": "response_time {host=\"DESKTOP-QQQOPDE\", request=\"008_Cart\", simulation=\"PerfTestSimulation\"}"
+                    },
+                    "properties": [
+                      {
+                        "id": "displayName",
+                        "value": "008_Cart"
+                      }
+                    ]
+                  },
+                  {
+                    "matcher": {
+                      "id": "byName",
+                      "scope": "series",
+                      "options": "response_time {host=\"DESKTOP-QQQOPDE\", request=\"009_Checkout\", simulation=\"PerfTestSimulation\"}"
+                    },
+                    "properties": [
+                      {
+                        "id": "displayName",
+                        "value": "009_Checkout"
+                      }
+                    ]
+                  },
+                  {
+                    "matcher": {
+                      "id": "byName",
+                      "scope": "series",
+                      "options": "response_time {host=\"DESKTOP-QQQOPDE\", request=\"010_Choosing_Country\", simulation=\"PerfTestSimulation\"}"
+                    },
+                    "properties": [
+                      {
+                        "id": "displayName",
+                        "value": "010_Choosing_Country"
+                      }
+                    ]
+                  },
+                  {
+                    "matcher": {
+                      "id": "byName",
+                      "scope": "series",
+                      "options": "response_time {host=\"DESKTOP-QQQOPDE\", request=\"011_Place_Order\", simulation=\"PerfTestSimulation\"}"
+                    },
+                    "properties": [
+                      {
+                        "id": "displayName",
+                        "value": "011_Place_Order"
+                      }
+                    ]
+                  }
+                ]
+              }
+            }
+          }
+        }
+      },
+      "panel-1432": {
+        "kind": "Panel",
+        "spec": {
+          "id": 1432,
+          "title": "pct90 Response Time",
+          "description": "",
+          "links": [],
+          "data": {
+            "kind": "QueryGroup",
+            "spec": {
+              "queries": [
+                {
+                  "kind": "PanelQuery",
+                  "spec": {
+                    "query": {
+                      "kind": "DataQuery",
+                      "group": "influxdb",
+                      "version": "v0",
+                      "datasource": {
+                        "name": "$ds"
+                      },
+                      "spec": {
+                        "alias": "$col",
+                        "dsType": "influxdb",
+                        "fields": [
+                          {
+                            "func": "mean",
+                            "name": "value"
+                          }
+                        ],
+                        "groupBy": [
+                          {
+                            "params": [
+                              "$g"
+                            ],
+                            "type": "time"
+                          },
+                          {
+                            "params": [
+                              "simulation"
+                            ],
+                            "type": "tag"
+                          },
+                          {
+                            "params": [
+                              "null"
+                            ],
+                            "type": "fill"
+                          }
+                        ],
+                        "measurement": "gatling",
+                        "orderByTime": "ASC",
+                        "policy": "default",
+                        "query": "from(bucket: \"gatling\")\r\n  |> range(start: v.timeRangeStart, stop: v.timeRangeStop)\r\n  |> filter(fn: (r) => r[\"_measurement\"] == \"gatling\")\r\n  |> filter(fn: (r) => r[\"simulation\"] == \"PerfTestSimulation_rolling\")\r\n  |> filter(fn: (r) => r[\"request\"] == \"ALL\")\r\n  |> filter(fn: (r) => r[\"_field\"] == \"response_time_step_p90_avg\")\r\n  |> aggregateWindow(every: 30s, fn: mean, createEmpty: false)",
+                        "rawQuery": true,
+                        "resultFormat": "time_series",
+                        "select": [
+                          [
+                            {
+                              "params": [
+                                "percentiles50"
+                              ],
+                              "type": "field"
+                            },
+                            {
+                              "params": [
+                                "50"
+                              ],
+                              "type": "percentile"
+                            },
+                            {
+                              "params": [
+                                "50%"
+                              ],
+                              "type": "alias"
+                            }
+                          ],
+                          [
+                            {
+                              "params": [
+                                "percentiles95"
+                              ],
+                              "type": "field"
+                            },
+                            {
+                              "params": [
+                                "95"
+                              ],
+                              "type": "percentile"
+                            },
+                            {
+                              "params": [
+                                "95%"
+                              ],
+                              "type": "alias"
+                            }
+                          ],
+                          [
+                            {
+                              "params": [
+                                "percentiles99"
+                              ],
+                              "type": "field"
+                            },
+                            {
+                              "params": [
+                                "99"
+                              ],
+                              "type": "percentile"
+                            },
+                            {
+                              "params": [
+                                "99%"
+                              ],
+                              "type": "alias"
+                            }
+                          ],
+                          [
+                            {
+                              "params": [
+                                "max"
+                              ],
+                              "type": "field"
+                            },
+                            {
+                              "params": [],
+                              "type": "max"
+                            },
+                            {
+                              "params": [
+                                "max"
+                              ],
+                              "type": "alias"
+                            }
+                          ],
+                          [
+                            {
+                              "params": [
+                                "percentiles75"
+                              ],
+                              "type": "field"
+                            },
+                            {
+                              "params": [
+                                "75"
+                              ],
+                              "type": "percentile"
+                            },
+                            {
+                              "params": [
+                                "75%"
+                              ],
+                              "type": "alias"
+                            }
+                          ],
+                          [
+                            {
+                              "params": [
+                                "min"
+                              ],
+                              "type": "field"
+                            },
+                            {
+                              "params": [],
+                              "type": "min"
+                            },
+                            {
+                              "params": [
+                                "min"
+                              ],
+                              "type": "alias"
+                            }
+                          ]
+                        ],
+                        "tags": [
+                          {
+                            "key": "request",
+                            "operator": "=",
+                            "value": "allRequests"
+                          },
+                          {
+                            "condition": "AND",
+                            "key": "status",
+                            "operator": "=",
+                            "value": "ok"
+                          },
+                          {
+                            "condition": "AND",
+                            "key": "simulation",
+                            "operator": "=~",
+                            "value": "/^$simulation$/"
+                          }
+                        ]
+                      }
+                    },
+                    "refId": "A",
+                    "hidden": false
+                  }
+                }
+              ],
+              "transformations": [],
+              "queryOptions": {
+                "interval": "10s"
+              }
+            }
+          },
+          "vizConfig": {
+            "kind": "VizConfig",
+            "group": "timeseries",
+            "version": "13.2.3",
+            "spec": {
+              "options": {
+                "dataLinks": [],
+                "legend": {
+                  "calcs": [],
+                  "displayMode": "list",
+                  "placement": "bottom",
+                  "showLegend": true
+                },
+                "tooltip": {
+                  "hideZeros": false,
+                  "mode": "multi",
+                  "sort": "none"
+                }
+              },
+              "fieldConfig": {
+                "defaults": {
+                  "unit": "ms",
+                  "min": 0,
+                  "thresholds": {
+                    "mode": "absolute",
+                    "steps": [
+                      {
+                        "value": 0,
+                        "color": "green"
+                      },
+                      {
+                        "value": 80,
+                        "color": "red"
+                      }
+                    ]
+                  },
+                  "color": {
+                    "mode": "palette-classic"
+                  },
+                  "custom": {
+                    "axisBorderShow": false,
+                    "axisCenteredZero": false,
+                    "axisColorMode": "text",
+                    "axisLabel": "",
+                    "axisPlacement": "auto",
+                    "barAlignment": 0,
+                    "barWidthFactor": 0.6,
+                    "drawStyle": "line",
+                    "fillOpacity": 0,
+                    "gradientMode": "none",
+                    "hideFrom": {
+                      "legend": false,
+                      "tooltip": false,
+                      "viz": false
+                    },
+                    "insertNulls": false,
+                    "lineInterpolation": "linear",
+                    "lineWidth": 1,
+                    "pointSize": 5,
+                    "scaleDistribution": {
+                      "type": "linear"
+                    },
+                    "showPoints": "auto",
+                    "showValues": false,
+                    "spanNulls": false,
+                    "stacking": {
+                      "group": "A",
+                      "mode": "none"
+                    },
+                    "thresholdsStyle": {
+                      "mode": "off"
+                    }
+                  }
+                },
+                "overrides": [
+                  {
+                    "matcher": {
+                      "id": "byName",
+                      "options": "min"
+                    },
+                    "properties": [
+                      {
+                        "id": "color",
+                        "value": {
+                          "fixedColor": "#C4FD90",
+                          "mode": "fixed"
+                        }
+                      }
+                    ]
+                  },
+                  {
+                    "matcher": {
+                      "id": "byName",
+                      "options": "50%"
+                    },
+                    "properties": [
+                      {
+                        "id": "color",
+                        "value": {
+                          "fixedColor": "#6FF2AD",
+                          "mode": "fixed"
+                        }
+                      }
+                    ]
+                  },
+                  {
+                    "matcher": {
+                      "id": "byName",
+                      "options": "75%"
+                    },
+                    "properties": [
+                      {
+                        "id": "color",
+                        "value": {
+                          "fixedColor": "#60ECE5",
+                          "mode": "fixed"
+                        }
+                      }
+                    ]
+                  },
+                  {
+                    "matcher": {
+                      "id": "byName",
+                      "options": "95%"
+                    },
+                    "properties": [
+                      {
+                        "id": "color",
+                        "value": {
+                          "fixedColor": "#BC28D7",
+                          "mode": "fixed"
+                        }
+                      }
+                    ]
+                  },
+                  {
+                    "matcher": {
+                      "id": "byName",
+                      "options": "99%"
+                    },
+                    "properties": [
+                      {
+                        "id": "color",
+                        "value": {
+                          "fixedColor": "#D11C97",
+                          "mode": "fixed"
+                        }
+                      }
+                    ]
+                  },
+                  {
+                    "matcher": {
+                      "id": "byName",
+                      "options": "max"
+                    },
+                    "properties": [
+                      {
+                        "id": "color",
+                        "value": {
+                          "fixedColor": "#C73905",
+                          "mode": "fixed"
+                        }
+                      }
+                    ]
+                  },
+                  {
+                    "matcher": {
+                      "id": "byName",
+                      "options": "Active Users"
+                    },
+                    "properties": [
+                      {
+                        "id": "color",
+                        "value": {
+                          "fixedColor": "#FF9D00",
+                          "mode": "fixed"
+                        }
+                      },
+                      {
+                        "id": "custom.fillOpacity",
+                        "value": 0
+                      },
+                      {
+                        "id": "custom.lineWidth",
+                        "value": 4
+                      },
+                      {
+                        "id": "unit",
+                        "value": "none"
+                      },
+                      {
+                        "id": "custom.axisPlacement",
+                        "value": "right"
+                      },
+                      {
+                        "id": "custom.axisLabel",
+                        "value": "Active Users"
+                      }
+                    ]
+                  },
+                  {
+                    "matcher": {
+                      "id": "byName",
+                      "options": "min"
+                    },
+                    "properties": [
+                      {
+                        "id": "color",
+                        "value": {
+                          "fixedColor": "#C4FD90",
+                          "mode": "fixed"
+                        }
+                      }
+                    ]
+                  },
+                  {
+                    "matcher": {
+                      "id": "byName",
+                      "options": "50%"
+                    },
+                    "properties": [
+                      {
+                        "id": "color",
+                        "value": {
+                          "fixedColor": "#6FF2AD",
+                          "mode": "fixed"
+                        }
+                      }
+                    ]
+                  },
+                  {
+                    "matcher": {
+                      "id": "byName",
+                      "options": "75%"
+                    },
+                    "properties": [
+                      {
+                        "id": "color",
+                        "value": {
+                          "fixedColor": "#60ECE5",
+                          "mode": "fixed"
+                        }
+                      }
+                    ]
+                  },
+                  {
+                    "matcher": {
+                      "id": "byName",
+                      "options": "95%"
+                    },
+                    "properties": [
+                      {
+                        "id": "color",
+                        "value": {
+                          "fixedColor": "#BC28D7",
+                          "mode": "fixed"
+                        }
+                      }
+                    ]
+                  },
+                  {
+                    "matcher": {
+                      "id": "byName",
+                      "options": "99%"
+                    },
+                    "properties": [
+                      {
+                        "id": "color",
+                        "value": {
+                          "fixedColor": "#D11C97",
+                          "mode": "fixed"
+                        }
+                      }
+                    ]
+                  },
+                  {
+                    "matcher": {
+                      "id": "byName",
+                      "options": "max"
+                    },
+                    "properties": [
+                      {
+                        "id": "color",
+                        "value": {
+                          "fixedColor": "#C73905",
+                          "mode": "fixed"
+                        }
+                      }
+                    ]
+                  },
+                  {
+                    "matcher": {
+                      "id": "byName",
+                      "options": "Active Users"
+                    },
+                    "properties": [
+                      {
+                        "id": "color",
+                        "value": {
+                          "fixedColor": "#FF9D00",
+                          "mode": "fixed"
+                        }
+                      },
+                      {
+                        "id": "custom.fillOpacity",
+                        "value": 0
+                      },
+                      {
+                        "id": "custom.lineWidth",
+                        "value": 4
+                      },
+                      {
+                        "id": "unit",
+                        "value": "none"
+                      },
+                      {
+                        "id": "custom.axisPlacement",
+                        "value": "right"
+                      },
+                      {
+                        "id": "custom.axisLabel",
+                        "value": "Active Users"
+                      }
+                    ]
+                  },
+                  {
+                    "matcher": {
+                      "id": "byName",
+                      "options": "min"
+                    },
+                    "properties": [
+                      {
+                        "id": "color",
+                        "value": {
+                          "fixedColor": "#C4FD90",
+                          "mode": "fixed"
+                        }
+                      }
+                    ]
+                  },
+                  {
+                    "matcher": {
+                      "id": "byName",
+                      "options": "50%"
+                    },
+                    "properties": [
+                      {
+                        "id": "color",
+                        "value": {
+                          "fixedColor": "#6FF2AD",
+                          "mode": "fixed"
+                        }
+                      }
+                    ]
+                  },
+                  {
+                    "matcher": {
+                      "id": "byName",
+                      "options": "75%"
+                    },
+                    "properties": [
+                      {
+                        "id": "color",
+                        "value": {
+                          "fixedColor": "#60ECE5",
+                          "mode": "fixed"
+                        }
+                      }
+                    ]
+                  },
+                  {
+                    "matcher": {
+                      "id": "byName",
+                      "options": "95%"
+                    },
+                    "properties": [
+                      {
+                        "id": "color",
+                        "value": {
+                          "fixedColor": "#BC28D7",
+                          "mode": "fixed"
+                        }
+                      }
+                    ]
+                  },
+                  {
+                    "matcher": {
+                      "id": "byName",
+                      "options": "99%"
+                    },
+                    "properties": [
+                      {
+                        "id": "color",
+                        "value": {
+                          "fixedColor": "#D11C97",
+                          "mode": "fixed"
+                        }
+                      }
+                    ]
+                  },
+                  {
+                    "matcher": {
+                      "id": "byName",
+                      "options": "max"
+                    },
+                    "properties": [
+                      {
+                        "id": "color",
+                        "value": {
+                          "fixedColor": "#C73905",
+                          "mode": "fixed"
+                        }
+                      }
+                    ]
+                  },
+                  {
+                    "matcher": {
+                      "id": "byName",
+                      "options": "Active Users"
+                    },
+                    "properties": [
+                      {
+                        "id": "color",
+                        "value": {
+                          "fixedColor": "#FF9D00",
+                          "mode": "fixed"
+                        }
+                      },
+                      {
+                        "id": "custom.fillOpacity",
+                        "value": 0
+                      },
+                      {
+                        "id": "custom.lineWidth",
+                        "value": 4
+                      },
+                      {
+                        "id": "unit",
+                        "value": "none"
+                      },
+                      {
+                        "id": "custom.axisPlacement",
+                        "value": "right"
+                      },
+                      {
+                        "id": "custom.axisLabel",
+                        "value": "Active Users"
+                      }
+                    ]
+                  },
+                  {
+                    "matcher": {
+                      "id": "byName",
+                      "options": "min"
+                    },
+                    "properties": [
+                      {
+                        "id": "color",
+                        "value": {
+                          "fixedColor": "#C4FD90",
+                          "mode": "fixed"
+                        }
+                      }
+                    ]
+                  },
+                  {
+                    "matcher": {
+                      "id": "byName",
+                      "options": "50%"
+                    },
+                    "properties": [
+                      {
+                        "id": "color",
+                        "value": {
+                          "fixedColor": "#6FF2AD",
+                          "mode": "fixed"
+                        }
+                      }
+                    ]
+                  },
+                  {
+                    "matcher": {
+                      "id": "byName",
+                      "options": "75%"
+                    },
+                    "properties": [
+                      {
+                        "id": "color",
+                        "value": {
+                          "fixedColor": "#60ECE5",
+                          "mode": "fixed"
+                        }
+                      }
+                    ]
+                  },
+                  {
+                    "matcher": {
+                      "id": "byName",
+                      "options": "95%"
+                    },
+                    "properties": [
+                      {
+                        "id": "color",
+                        "value": {
+                          "fixedColor": "#BC28D7",
+                          "mode": "fixed"
+                        }
+                      }
+                    ]
+                  },
+                  {
+                    "matcher": {
+                      "id": "byName",
+                      "options": "99%"
+                    },
+                    "properties": [
+                      {
+                        "id": "color",
+                        "value": {
+                          "fixedColor": "#D11C97",
+                          "mode": "fixed"
+                        }
+                      }
+                    ]
+                  },
+                  {
+                    "matcher": {
+                      "id": "byName",
+                      "options": "max"
+                    },
+                    "properties": [
+                      {
+                        "id": "color",
+                        "value": {
+                          "fixedColor": "#C73905",
+                          "mode": "fixed"
+                        }
+                      }
+                    ]
+                  },
+                  {
+                    "matcher": {
+                      "id": "byName",
+                      "options": "Active Users"
+                    },
+                    "properties": [
+                      {
+                        "id": "color",
+                        "value": {
+                          "fixedColor": "#FF9D00",
+                          "mode": "fixed"
+                        }
+                      },
+                      {
+                        "id": "custom.fillOpacity",
+                        "value": 0
+                      },
+                      {
+                        "id": "custom.lineWidth",
+                        "value": 4
+                      },
+                      {
+                        "id": "unit",
+                        "value": "none"
+                      },
+                      {
+                        "id": "custom.axisPlacement",
+                        "value": "right"
+                      },
+                      {
+                        "id": "custom.axisLabel",
+                        "value": "Active Users"
+                      }
+                    ]
+                  },
+                  {
+                    "matcher": {
+                      "id": "byName",
+                      "options": "response_time PerfTestSimulation"
+                    },
+                    "properties": [
+                      {
+                        "id": "color",
+                        "value": {
+                          "fixedColor": "light-purple",
+                          "mode": "fixed"
+                        }
+                      }
+                    ]
+                  },
+                  {
+                    "matcher": {
+                      "id": "byName",
+                      "options": "min"
+                    },
+                    "properties": [
+                      {
+                        "id": "color",
+                        "value": {
+                          "fixedColor": "#C4FD90",
+                          "mode": "fixed"
+                        }
+                      }
+                    ]
+                  },
+                  {
+                    "matcher": {
+                      "id": "byName",
+                      "options": "50%"
+                    },
+                    "properties": [
+                      {
+                        "id": "color",
+                        "value": {
+                          "fixedColor": "#6FF2AD",
+                          "mode": "fixed"
+                        }
+                      }
+                    ]
+                  },
+                  {
+                    "matcher": {
+                      "id": "byName",
+                      "options": "75%"
+                    },
+                    "properties": [
+                      {
+                        "id": "color",
+                        "value": {
+                          "fixedColor": "#60ECE5",
+                          "mode": "fixed"
+                        }
+                      }
+                    ]
+                  },
+                  {
+                    "matcher": {
+                      "id": "byName",
+                      "options": "95%"
+                    },
+                    "properties": [
+                      {
+                        "id": "color",
+                        "value": {
+                          "fixedColor": "#BC28D7",
+                          "mode": "fixed"
+                        }
+                      }
+                    ]
+                  },
+                  {
+                    "matcher": {
+                      "id": "byName",
+                      "options": "99%"
+                    },
+                    "properties": [
+                      {
+                        "id": "color",
+                        "value": {
+                          "fixedColor": "#D11C97",
+                          "mode": "fixed"
+                        }
+                      }
+                    ]
+                  },
+                  {
+                    "matcher": {
+                      "id": "byName",
+                      "options": "max"
+                    },
+                    "properties": [
+                      {
+                        "id": "color",
+                        "value": {
+                          "fixedColor": "#C73905",
+                          "mode": "fixed"
+                        }
+                      }
+                    ]
+                  },
+                  {
+                    "matcher": {
+                      "id": "byName",
+                      "options": "Active Users"
+                    },
+                    "properties": [
+                      {
+                        "id": "color",
+                        "value": {
+                          "fixedColor": "#FF9D00",
+                          "mode": "fixed"
+                        }
+                      },
+                      {
+                        "id": "custom.fillOpacity",
+                        "value": 0
+                      },
+                      {
+                        "id": "custom.lineWidth",
+                        "value": 4
+                      },
+                      {
+                        "id": "unit",
+                        "value": "none"
+                      },
+                      {
+                        "id": "custom.axisPlacement",
+                        "value": "right"
+                      },
+                      {
+                        "id": "custom.axisLabel",
+                        "value": "Active Users"
+                      }
+                    ]
+                  },
+                  {
+                    "matcher": {
+                      "id": "byName",
+                      "options": "min"
+                    },
+                    "properties": [
+                      {
+                        "id": "color",
+                        "value": {
+                          "fixedColor": "#C4FD90",
+                          "mode": "fixed"
+                        }
+                      }
+                    ]
+                  },
+                  {
+                    "matcher": {
+                      "id": "byName",
+                      "options": "50%"
+                    },
+                    "properties": [
+                      {
+                        "id": "color",
+                        "value": {
+                          "fixedColor": "#6FF2AD",
+                          "mode": "fixed"
+                        }
+                      }
+                    ]
+                  },
+                  {
+                    "matcher": {
+                      "id": "byName",
+                      "options": "75%"
+                    },
+                    "properties": [
+                      {
+                        "id": "color",
+                        "value": {
+                          "fixedColor": "#60ECE5",
+                          "mode": "fixed"
+                        }
+                      }
+                    ]
+                  },
+                  {
+                    "matcher": {
+                      "id": "byName",
+                      "options": "95%"
+                    },
+                    "properties": [
+                      {
+                        "id": "color",
+                        "value": {
+                          "fixedColor": "#BC28D7",
+                          "mode": "fixed"
+                        }
+                      }
+                    ]
+                  },
+                  {
+                    "matcher": {
+                      "id": "byName",
+                      "options": "99%"
+                    },
+                    "properties": [
+                      {
+                        "id": "color",
+                        "value": {
+                          "fixedColor": "#D11C97",
+                          "mode": "fixed"
+                        }
+                      }
+                    ]
+                  },
+                  {
+                    "matcher": {
+                      "id": "byName",
+                      "options": "max"
+                    },
+                    "properties": [
+                      {
+                        "id": "color",
+                        "value": {
+                          "fixedColor": "#C73905",
+                          "mode": "fixed"
+                        }
+                      }
+                    ]
+                  },
+                  {
+                    "matcher": {
+                      "id": "byName",
+                      "options": "Active Users"
+                    },
+                    "properties": [
+                      {
+                        "id": "color",
+                        "value": {
+                          "fixedColor": "#FF9D00",
+                          "mode": "fixed"
+                        }
+                      },
+                      {
+                        "id": "custom.fillOpacity",
+                        "value": 0
+                      },
+                      {
+                        "id": "custom.lineWidth",
+                        "value": 4
+                      },
+                      {
+                        "id": "unit",
+                        "value": "none"
+                      },
+                      {
+                        "id": "custom.axisPlacement",
+                        "value": "right"
+                      },
+                      {
+                        "id": "custom.axisLabel",
+                        "value": "Active Users"
+                      }
+                    ]
+                  },
+                  {
+                    "matcher": {
+                      "id": "byName",
+                      "scope": "series",
+                      "options": "response_time {simulation=\"PerfTestSimulation\"}"
+                    },
+                    "properties": [
+                      {
+                        "id": "displayName",
+                        "value": "pct90"
+                      }
+                    ]
+                  },
+                  {
+                    "matcher": {
+                      "id": "byName",
+                      "scope": "series",
+                      "options": "response_time {host=\"DESKTOP-QQQOPDE\", simulation=\"PerfTestSimulation\"}"
+                    },
+                    "properties": [
+                      {
+                        "id": "displayName",
+                        "value": "median"
+                      }
+                    ]
+                  },
+                  {
+                    "matcher": {
+                      "id": "byName",
+                      "options": "pct90"
+                    },
+                    "properties": [
+                      {
+                        "id": "color",
+                        "value": {
+                          "fixedColor": "light-blue",
+                          "mode": "fixed"
+                        }
+                      }
+                    ]
+                  },
+                  {
+                    "matcher": {
+                      "id": "byName",
+                      "scope": "series",
+                      "options": "Response Time Median (P50) {host=\"DESKTOP-QQQOPDE\", simulation=\"PerfTestSimulation\"}"
+                    },
+                    "properties": [
+                      {
+                        "id": "displayName",
+                        "value": "median"
+                      }
+                    ]
+                  },
+                  {
+                    "matcher": {
+                      "id": "byName",
+                      "scope": "series",
+                      "options": "response_time_step_p90_avg {host=\"DESKTOP-QQQOPDE\", request=\"ALL\", simulation=\"PerfTestSimulation_rolling\", status=\"all\"}"
+                    },
+                    "properties": [
+                      {
+                        "id": "displayName",
+                        "value": "pct90 Response Time"
+                      }
+                    ]
+                  },
+                  {
+                    "matcher": {
+                      "id": "byName",
+                      "options": "pct90 Response Time"
+                    },
+                    "properties": [
+                      {
+                        "id": "color",
+                        "value": {
+                          "fixedColor": "dark-blue",
+                          "mode": "fixed"
+                        }
+                      }
+                    ]
+                  }
+                ]
+              }
+            }
+          }
+        }
+      },
+      "panel-1434": {
+        "kind": "Panel",
+        "spec": {
+          "id": 1434,
+          "title": "Error count per request",
+          "description": "",
+          "links": [],
+          "data": {
+            "kind": "QueryGroup",
+            "spec": {
+              "queries": [
+                {
+                  "kind": "PanelQuery",
+                  "spec": {
+                    "query": {
+                      "kind": "DataQuery",
+                      "group": "influxdb",
+                      "version": "v0",
+                      "datasource": {
+                        "name": "dg2bgucafjjeoe"
+                      },
+                      "spec": {
+                        "query": "from(bucket: \"gatling\")\r\n  |> range(start: v.timeRangeStart, stop: v.timeRangeStop)\r\n  |> filter(fn: (r) => r[\"_measurement\"] == \"gatling\")\r\n  |> filter(fn: (r) => r[\"simulation\"] == \"PerfTestSimulation\")\r\n  // Шукаємо всі статус-коди помилок (4xx та 5xx) замість старого \"ko\"\r\n  |> filter(fn: (r) => r[\"status\"] =~ /^[45][0-9]{2}$/)\r\n  |> filter(fn: (r) => r[\"_field\"] == \"count\")\r\n  |> group(columns: [\"_measurement\", \"simulation\", \"_field\", \"host\", \"request\", \"Name\"])\r\n  |> aggregateWindow(every: 10s, fn: sum, createEmpty: false)\r\n  |> set(key: \"_field\", value: \"Error Count\")"
+                      }
+                    },
+                    "refId": "A",
+                    "hidden": false
+                  }
+                }
+              ],
+              "transformations": [],
+              "queryOptions": {}
+            }
+          },
+          "vizConfig": {
+            "kind": "VizConfig",
+            "group": "timeseries",
+            "version": "13.2.3",
+            "spec": {
+              "options": {
+                "legend": {
+                  "calcs": [],
+                  "displayMode": "table",
+                  "placement": "right",
+                  "showLegend": true
+                },
+                "tooltip": {
+                  "hideZeros": false,
+                  "mode": "single",
+                  "sort": "none"
+                }
+              },
+              "fieldConfig": {
+                "defaults": {
+                  "thresholds": {
+                    "mode": "absolute",
+                    "steps": [
+                      {
+                        "value": 0,
+                        "color": "dark-red"
+                      }
+                    ]
+                  },
+                  "color": {
+                    "mode": "palette-classic"
+                  },
+                  "custom": {
+                    "axisBorderShow": false,
+                    "axisCenteredZero": false,
+                    "axisColorMode": "text",
+                    "axisLabel": "",
+                    "axisPlacement": "auto",
+                    "barAlignment": 0,
+                    "barWidthFactor": 0.6,
+                    "drawStyle": "line",
+                    "fillOpacity": 0,
+                    "gradientMode": "none",
+                    "hideFrom": {
+                      "legend": false,
+                      "tooltip": false,
+                      "viz": false
+                    },
+                    "insertNulls": false,
+                    "lineInterpolation": "linear",
+                    "lineWidth": 1,
+                    "pointSize": 5,
+                    "scaleDistribution": {
+                      "type": "linear"
+                    },
+                    "showPoints": "auto",
+                    "showValues": false,
+                    "spanNulls": false,
+                    "stacking": {
+                      "group": "A",
+                      "mode": "none"
+                    },
+                    "thresholdsStyle": {
+                      "mode": "off"
+                    }
+                  }
+                },
+                "overrides": [
+                  {
+                    "matcher": {
+                      "id": "byName",
+                      "scope": "series",
+                      "options": "Error Count {host=\"DESKTOP-QQQOPDE\", request=\"001_HomePage\", simulation=\"PerfTestSimulation\"}"
+                    },
+                    "properties": [
+                      {
+                        "id": "displayName",
+                        "value": "001_HomePage"
+                      }
+                    ]
+                  },
+                  {
+                    "matcher": {
+                      "id": "byName",
+                      "scope": "series",
+                      "options": "Error Count {host=\"DESKTOP-QQQOPDE\", request=\"002_Category\", simulation=\"PerfTestSimulation\"}"
+                    },
+                    "properties": [
+                      {
+                        "id": "displayName",
+                        "value": "002_Category"
+                      }
+                    ]
+                  },
+                  {
+                    "matcher": {
+                      "id": "byName",
+                      "scope": "series",
+                      "options": "Error Count {host=\"DESKTOP-QQQOPDE\", request=\"003_Tables\", simulation=\"PerfTestSimulation\"}"
+                    },
+                    "properties": [
+                      {
+                        "id": "displayName",
+                        "value": "003_Tables"
+                      }
+                    ]
+                  },
+                  {
+                    "matcher": {
+                      "id": "byName",
+                      "scope": "series",
+                      "options": "Error Count {host=\"DESKTOP-QQQOPDE\", request=\"004_Tables_\", simulation=\"PerfTestSimulation\"}"
+                    },
+                    "properties": [
+                      {
+                        "id": "displayName",
+                        "value": "004_Tables_addToCart"
+                      }
+                    ]
+                  },
+                  {
+                    "matcher": {
+                      "id": "byName",
+                      "scope": "series",
+                      "options": "Error Count {host=\"DESKTOP-QQQOPDE\", request=\"005_Category\", simulation=\"PerfTestSimulation\"}"
+                    },
+                    "properties": [
+                      {
+                        "id": "displayName",
+                        "value": "005_Category"
+                      }
+                    ]
+                  },
+                  {
+                    "matcher": {
+                      "id": "byName",
+                      "scope": "series",
+                      "options": "Error Count {host=\"DESKTOP-QQQOPDE\", request=\"006_Chairs\", simulation=\"PerfTestSimulation\"}"
+                    },
+                    "properties": [
+                      {
+                        "id": "displayName",
+                        "value": "006_Chairs"
+                      }
+                    ]
+                  },
+                  {
+                    "matcher": {
+                      "id": "byName",
+                      "scope": "series",
+                      "options": "Error Count {host=\"DESKTOP-QQQOPDE\", request=\"007_Chairs_\", simulation=\"PerfTestSimulation\"}"
+                    },
+                    "properties": [
+                      {
+                        "id": "displayName",
+                        "value": "007_Chairs_addToCart"
+                      }
+                    ]
+                  },
+                  {
+                    "matcher": {
+                      "id": "byName",
+                      "scope": "series",
+                      "options": "Error Count {host=\"DESKTOP-QQQOPDE\", request=\"008_Cart\", simulation=\"PerfTestSimulation\"}"
+                    },
+                    "properties": [
+                      {
+                        "id": "displayName",
+                        "value": "008_Cart"
+                      }
+                    ]
+                  },
+                  {
+                    "matcher": {
+                      "id": "byName",
+                      "scope": "series",
+                      "options": "Error Count {host=\"DESKTOP-QQQOPDE\", request=\"009_Checkout\", simulation=\"PerfTestSimulation\"}"
+                    },
+                    "properties": [
+                      {
+                        "id": "displayName",
+                        "value": "009_Checkout"
+                      }
+                    ]
+                  },
+                  {
+                    "matcher": {
+                      "id": "byName",
+                      "scope": "series",
+                      "options": "Error Count {host=\"DESKTOP-QQQOPDE\", request=\"010_Choosing_Country\", simulation=\"PerfTestSimulation\"}"
+                    },
+                    "properties": [
+                      {
+                        "id": "displayName",
+                        "value": "010_Choosing_Country"
+                      }
+                    ]
+                  },
+                  {
+                    "matcher": {
+                      "id": "byName",
+                      "scope": "series",
+                      "options": "Error Count {host=\"DESKTOP-QQQOPDE\", request=\"011_Place_Order\", simulation=\"PerfTestSimulation\"}"
+                    },
+                    "properties": [
+                      {
+                        "id": "displayName",
+                        "value": "011_Place_Order"
+                      }
+                    ]
+                  }
+                ]
+              }
+            }
+          }
+        }
+      },
+      "panel-1436": {
+        "kind": "Panel",
+        "spec": {
+          "id": 1436,
+          "title": "Error count per request",
+          "description": "",
+          "links": [],
+          "data": {
+            "kind": "QueryGroup",
+            "spec": {
+              "queries": [
+                {
+                  "kind": "PanelQuery",
+                  "spec": {
+                    "query": {
+                      "kind": "DataQuery",
+                      "group": "influxdb",
+                      "version": "v0",
+                      "datasource": {
+                        "name": "dg2bgucafjjeoe"
+                      },
+                      "spec": {
+                        "query": "from(bucket: \"gatling\")\r\n  |> range(start: v.timeRangeStart, stop: v.timeRangeStop)\r\n  |> filter(fn: (r) => r[\"_measurement\"] == \"gatling\")\r\n  |> filter(fn: (r) => r[\"simulation\"] == \"PerfTestSimulation\")\r\n  |> filter(fn: (r) => r[\"status\"] =~ /^[45][0-9]{2}$/)\r\n  |> filter(fn: (r) => r[\"_field\"] == \"count\")\r\n  // Залишаємо для групування лише необхідні мінімальні теги, включно зі статусом\r\n  |> group(columns: [\"_measurement\", \"simulation\", \"_field\", \"request\", \"status\"])\r\n  |> aggregateWindow(every: 10s, fn: sum, createEmpty: false)\r\n  |> set(key: \"_field\", value: \"Error Count\")"
+                      }
+                    },
+                    "refId": "A",
+                    "hidden": false
+                  }
+                }
+              ],
+              "transformations": [],
+              "queryOptions": {}
+            }
+          },
+          "vizConfig": {
+            "kind": "VizConfig",
+            "group": "bargauge",
+            "version": "13.2.3",
+            "spec": {
+              "options": {
+                "displayMode": "gradient",
+                "legend": {
+                  "calcs": [],
+                  "displayMode": "list",
+                  "placement": "bottom",
+                  "showLegend": false
+                },
+                "maxVizHeight": 300,
+                "minVizHeight": 16,
+                "minVizWidth": 8,
+                "namePlacement": "auto",
+                "orientation": "auto",
+                "reduceOptions": {
+                  "calcs": [
+                    "sum"
+                  ],
+                  "fields": "",
+                  "values": false
+                },
+                "showUnfilled": true,
+                "sizing": "auto",
+                "valueMode": "color"
+              },
+              "fieldConfig": {
+                "defaults": {
+                  "thresholds": {
+                    "mode": "absolute",
+                    "steps": [
+                      {
+                        "value": 0,
+                        "color": "green"
+                      },
+                      {
+                        "value": 80,
+                        "color": "red"
+                      }
+                    ]
+                  },
+                  "color": {
+                    "mode": "thresholds"
+                  }
+                },
+                "overrides": [
+                  {
+                    "matcher": {
+                      "id": "byName",
+                      "scope": "series",
+                      "options": "Error Count"
+                    },
+                    "properties": [
+                      {
+                        "id": "displayName",
+                        "value": "${__field.labels.request} - ${__field.labels.status}"
+                      }
+                    ]
+                  }
+                ]
+              }
+            }
+          }
+        }
+      },
+      "panel-1440": {
+        "kind": "Panel",
+        "spec": {
+          "id": 1440,
+          "title": "Error count",
+          "description": "",
+          "links": [],
+          "data": {
+            "kind": "QueryGroup",
+            "spec": {
+              "queries": [
+                {
+                  "kind": "PanelQuery",
+                  "spec": {
+                    "query": {
+                      "kind": "DataQuery",
+                      "group": "influxdb",
+                      "version": "v0",
+                      "datasource": {
+                        "name": "dg2bgucafjjeoe"
+                      },
+                      "spec": {
+                        "query": "from(bucket: \"gatling\")\r\n  |> range(start: v.timeRangeStart, stop: v.timeRangeStop)\r\n  |> filter(fn: (r) => r[\"_measurement\"] == \"gatling\")\r\n  |> filter(fn: (r) => r[\"simulation\"] == \"PerfTestSimulation\")\r\n  // Шукаємо всі статус-коди помилок (4xx та 5xx) замість старого \"ko\"\r\n  |> filter(fn: (r) => r[\"status\"] =~ /^[45][0-9]{2}$/)\r\n  |> filter(fn: (r) => r[\"_field\"] == \"count\")\r\n  |> group(columns: [\"_measurement\", \"simulation\", \"_field\", \"host\"])\r\n  |> aggregateWindow(every: 10s, fn: sum, createEmpty: false)\r\n  |> set(key: \"_field\", value: \"Error Count\")"
+                      }
+                    },
+                    "refId": "A",
+                    "hidden": false
+                  }
+                }
+              ],
+              "transformations": [],
+              "queryOptions": {}
+            }
+          },
+          "vizConfig": {
+            "kind": "VizConfig",
+            "group": "timeseries",
+            "version": "13.2.3",
+            "spec": {
+              "options": {
+                "legend": {
+                  "calcs": [],
+                  "displayMode": "list",
+                  "placement": "bottom",
+                  "showLegend": true
+                },
+                "tooltip": {
+                  "hideZeros": false,
+                  "mode": "single",
+                  "sort": "none"
+                }
+              },
+              "fieldConfig": {
+                "defaults": {
+                  "displayName": "Error Count",
+                  "thresholds": {
+                    "mode": "absolute",
+                    "steps": [
+                      {
+                        "value": 0,
+                        "color": "green"
+                      },
+                      {
+                        "value": 80,
+                        "color": "red"
+                      }
+                    ]
+                  },
+                  "color": {
+                    "mode": "palette-classic"
+                  },
+                  "custom": {
+                    "axisBorderShow": false,
+                    "axisCenteredZero": false,
+                    "axisColorMode": "text",
+                    "axisLabel": "",
+                    "axisPlacement": "auto",
+                    "barAlignment": 0,
+                    "barWidthFactor": 0.6,
+                    "drawStyle": "line",
+                    "fillOpacity": 0,
+                    "gradientMode": "none",
+                    "hideFrom": {
+                      "legend": false,
+                      "tooltip": false,
+                      "viz": false
+                    },
+                    "insertNulls": false,
+                    "lineInterpolation": "linear",
+                    "lineWidth": 1,
+                    "pointSize": 5,
+                    "scaleDistribution": {
+                      "type": "linear"
+                    },
+                    "showPoints": "auto",
+                    "showValues": false,
+                    "spanNulls": false,
+                    "stacking": {
+                      "group": "A",
+                      "mode": "none"
+                    },
+                    "thresholdsStyle": {
+                      "mode": "off"
+                    }
+                  }
+                },
+                "overrides": [
+                  {
+                    "matcher": {
+                      "id": "byName",
+                      "scope": "series",
+                      "options": "Total Throughput (RPS) {host=\"DESKTOP-QQQOPDE\", simulation=\"PerfTestSimulation\"}"
+                    },
+                    "properties": [
+                      {
+                        "id": "unit",
+                        "value": "reqps"
+                      }
+                    ]
+                  },
+                  {
+                    "matcher": {
+                      "id": "byName",
+                      "options": "Error Count {host=\"DESKTOP-QQQOPDE\", simulation=\"PerfTestSimulation\"}"
+                    },
+                    "properties": [
+                      {
+                        "id": "color",
+                        "value": {
+                          "fixedColor": "dark-red",
+                          "mode": "fixed"
+                        }
+                      }
+                    ]
+                  },
+                  {
+                    "matcher": {
+                      "id": "byName",
+                      "options": "Error Count"
+                    },
+                    "properties": [
+                      {
+                        "id": "color",
+                        "value": {
+                          "fixedColor": "dark-red",
+                          "mode": "fixed"
+                        }
+                      }
+                    ]
+                  }
+                ]
+              }
+            }
+          }
+        }
+      },
+      "panel-1441": {
+        "kind": "Panel",
+        "spec": {
+          "id": 1441,
+          "title": "Total Throughput (RPS), pct90 Response Time and Error Count",
+          "description": "",
+          "links": [],
+          "data": {
+            "kind": "QueryGroup",
+            "spec": {
+              "queries": [
+                {
+                  "kind": "PanelQuery",
+                  "spec": {
+                    "query": {
+                      "kind": "DataQuery",
+                      "group": "influxdb",
+                      "version": "v0",
+                      "datasource": {
+                        "name": "dg2bgucafjjeoe"
+                      },
+                      "spec": {
+                        "query": "import \"date\"\r\n\r\nwindowEvery = 30s\r\n\r\nfrom(bucket: \"gatling\")\r\n  |> range(start: v.timeRangeStart, stop: date.sub(from: v.timeRangeStop, d: windowEvery))\r\n  |> filter(fn: (r) => r[\"_measurement\"] == \"gatling\")\r\n  |> filter(fn: (r) => r[\"simulation\"] == \"PerfTestSimulation\")\r\n  |> filter(fn: (r) => r[\"_field\"] == \"count\")\r\n  |> group(columns: [\"_measurement\", \"simulation\", \"_field\"])\r\n  |> aggregateWindow(every: windowEvery, fn: sum, createEmpty: false)\r\n  |> map(fn: (r) => ({ r with _value: float(v: r._value) / (float(v: int(v: windowEvery)) / 1000000000.0) }))\r\n  |> set(key: \"_field\", value: \"Total Throughput (RPS)\")"
+                      }
+                    },
+                    "refId": "A",
+                    "hidden": false
+                  }
+                },
+                {
+                  "kind": "PanelQuery",
+                  "spec": {
+                    "query": {
+                      "kind": "DataQuery",
+                      "group": "influxdb",
+                      "version": "v0",
+                      "datasource": {
+                        "name": "dg2bgucafjjeoe"
+                      },
+                      "spec": {
+                        "query": "from(bucket: \"gatling\")\r\n  |> range(start: v.timeRangeStart, stop: v.timeRangeStop)\r\n  |> filter(fn: (r) => r[\"_measurement\"] == \"gatling\")\r\n  |> filter(fn: (r) => r[\"simulation\"] == \"PerfTestSimulation_rolling\")\r\n  |> filter(fn: (r) => r[\"request\"] == \"ALL\")\r\n  |> filter(fn: (r) => r[\"_field\"] == \"response_time_step_p90_avg\")\r\n  |> aggregateWindow(every: 30s, fn: mean, createEmpty: false)"
+                      }
+                    },
+                    "refId": "B",
+                    "hidden": false
+                  }
+                },
+                {
+                  "kind": "PanelQuery",
+                  "spec": {
+                    "query": {
+                      "kind": "DataQuery",
+                      "group": "influxdb",
+                      "version": "v0",
+                      "datasource": {
+                        "name": "dg2bgucafjjeoe"
+                      },
+                      "spec": {
+                        "query": "from(bucket: \"gatling\")\r\n  |> range(start: v.timeRangeStart, stop: v.timeRangeStop)\r\n  |> filter(fn: (r) => r[\"_measurement\"] == \"gatling\")\r\n  |> filter(fn: (r) => r[\"simulation\"] == \"PerfTestSimulation\")\r\n  // Шукаємо всі статус-коди помилок (4xx та 5xx) замість старого \"ko\"\r\n  |> filter(fn: (r) => r[\"status\"] =~ /^[45][0-9]{2}$/)\r\n  |> filter(fn: (r) => r[\"_field\"] == \"count\")\r\n  |> group(columns: [\"_measurement\", \"simulation\", \"_field\", \"host\"])\r\n  |> aggregateWindow(every: 10s, fn: sum, createEmpty: false)\r\n  |> set(key: \"_field\", value: \"Error Count\")"
+                      }
+                    },
+                    "refId": "C",
+                    "hidden": false
+                  }
+                }
+              ],
+              "transformations": [],
+              "queryOptions": {}
+            }
+          },
+          "vizConfig": {
+            "kind": "VizConfig",
+            "group": "timeseries",
+            "version": "13.2.3",
+            "spec": {
+              "options": {
+                "legend": {
+                  "calcs": [],
+                  "displayMode": "list",
+                  "placement": "bottom",
+                  "showLegend": true
+                },
+                "tooltip": {
+                  "hideZeros": false,
+                  "mode": "single",
+                  "sort": "none"
+                }
+              },
+              "fieldConfig": {
+                "defaults": {
+                  "thresholds": {
+                    "mode": "absolute",
+                    "steps": [
+                      {
+                        "value": 0,
+                        "color": "green"
+                      },
+                      {
+                        "value": 80,
+                        "color": "red"
+                      }
+                    ]
+                  },
+                  "color": {
+                    "mode": "palette-classic"
+                  },
+                  "custom": {
+                    "axisBorderShow": false,
+                    "axisCenteredZero": false,
+                    "axisColorMode": "text",
+                    "axisLabel": "",
+                    "axisPlacement": "auto",
+                    "barAlignment": 0,
+                    "barWidthFactor": 0.6,
+                    "drawStyle": "line",
+                    "fillOpacity": 0,
+                    "gradientMode": "none",
+                    "hideFrom": {
+                      "legend": false,
+                      "tooltip": false,
+                      "viz": false
+                    },
+                    "insertNulls": false,
+                    "lineInterpolation": "linear",
+                    "lineWidth": 1,
+                    "pointSize": 5,
+                    "scaleDistribution": {
+                      "type": "linear"
+                    },
+                    "showPoints": "auto",
+                    "showValues": false,
+                    "spanNulls": false,
+                    "stacking": {
+                      "group": "A",
+                      "mode": "none"
+                    },
+                    "thresholdsStyle": {
+                      "mode": "off"
+                    }
+                  }
+                },
+                "overrides": [
+                  {
+                    "matcher": {
+                      "id": "byName",
+                      "scope": "series",
+                      "options": "Total Throughput (RPS) {host=\"DESKTOP-QQQOPDE\", simulation=\"PerfTestSimulation\"}"
+                    },
+                    "properties": [
+                      {
+                        "id": "unit",
+                        "value": "reqps"
+                      }
+                    ]
+                  },
+                  {
+                    "matcher": {
+                      "id": "byName",
+                      "scope": "series",
+                      "options": "Total Throughput (RPS) {host=\"DESKTOP-QQQOPDE\", simulation=\"PerfTestSimulation\"}"
+                    },
+                    "properties": [
+                      {
+                        "id": "displayName",
+                        "value": "Total Throughput (RPS)"
+                      }
+                    ]
+                  },
+                  {
+                    "matcher": {
+                      "id": "byName",
+                      "scope": "series",
+                      "options": "response_time {simulation=\"PerfTestSimulation\"}"
+                    },
+                    "properties": [
+                      {
+                        "id": "displayName",
+                        "value": "Response Time"
+                      },
+                      {
+                        "id": "unit",
+                        "value": "ms"
+                      }
+                    ]
+                  },
+                  {
+                    "matcher": {
+                      "id": "byName",
+                      "options": "Error Count {host=\"DESKTOP-QQQOPDE\", simulation=\"PerfTestSimulation\"}"
+                    },
+                    "properties": [
+                      {
+                        "id": "color",
+                        "value": {
+                          "fixedColor": "dark-red",
+                          "mode": "fixed"
+                        }
+                      }
+                    ]
+                  },
+                  {
+                    "matcher": {
+                      "id": "byName",
+                      "scope": "series",
+                      "options": "Error Count {host=\"DESKTOP-QQQOPDE\", simulation=\"PerfTestSimulation\"}"
+                    },
+                    "properties": [
+                      {
+                        "id": "displayName",
+                        "value": "Error Count"
+                      }
+                    ]
+                  },
+                  {
+                    "matcher": {
+                      "id": "byName",
+                      "options": "Response Time"
+                    },
+                    "properties": [
+                      {
+                        "id": "color",
+                        "value": {
+                          "fixedColor": "light-blue",
+                          "mode": "fixed"
+                        }
+                      }
+                    ]
+                  },
+                  {
+                    "matcher": {
+                      "id": "byName",
+                      "scope": "series",
+                      "options": "gatling response_time {simulation=\"PerfTestSimulation\"}"
+                    },
+                    "properties": [
+                      {
+                        "id": "custom.axisPlacement",
+                        "value": "right"
+                      },
+                      {
+                        "id": "unit",
+                        "value": "ms"
+                      },
+                      {
+                        "id": "displayName",
+                        "value": "Response Time"
+                      }
+                    ]
+                  },
+                  {
+                    "matcher": {
+                      "id": "byName",
+                      "scope": "series",
+                      "options": "gatling Total Throughput (RPS) {host=\"DESKTOP-QQQOPDE\", simulation=\"PerfTestSimulation\"}"
+                    },
+                    "properties": [
+                      {
+                        "id": "unit",
+                        "value": "reqps"
+                      },
+                      {
+                        "id": "displayName",
+                        "value": "Total Throughput (RPS)"
+                      }
+                    ]
+                  },
+                  {
+                    "matcher": {
+                      "id": "byName",
+                      "scope": "series",
+                      "options": "gatling response_time PerfTestSimulation"
+                    },
+                    "properties": [
+                      {
+                        "id": "unit",
+                        "value": "ms"
+                      }
+                    ]
+                  },
+                  {
+                    "matcher": {
+                      "id": "byName",
+                      "scope": "series",
+                      "options": "gatling Total Throughput (RPS) PerfTestSimulation"
+                    },
+                    "properties": [
+                      {
+                        "id": "unit",
+                        "value": "reqps"
+                      }
+                    ]
+                  },
+                  {
+                    "matcher": {
+                      "id": "byName",
+                      "scope": "series",
+                      "options": "gatling Total Throughput (RPS) PerfTestSimulation"
+                    },
+                    "properties": [
+                      {
+                        "id": "displayName",
+                        "value": "Total Throughput (RPS)"
+                      }
+                    ]
+                  },
+                  {
+                    "matcher": {
+                      "id": "byName",
+                      "scope": "series",
+                      "options": "gatling response_time PerfTestSimulation"
+                    },
+                    "properties": [
+                      {
+                        "id": "displayName",
+                        "value": "pct90"
+                      }
+                    ]
+                  },
+                  {
+                    "matcher": {
+                      "id": "byName",
+                      "scope": "series",
+                      "options": "gatling Total Throughput (RPS) {simulation=\"PerfTestSimulation\"}"
+                    },
+                    "properties": [
+                      {
+                        "id": "custom.axisPlacement",
+                        "value": "left"
+                      },
+                      {
+                        "id": "unit",
+                        "value": "reqps"
+                      }
+                    ]
+                  },
+                  {
+                    "matcher": {
+                      "id": "byName",
+                      "scope": "series",
+                      "options": "Total Throughput (RPS) {simulation=\"PerfTestSimulation\"}"
+                    },
+                    "properties": [
+                      {
+                        "id": "custom.axisPlacement",
+                        "value": "left"
+                      },
+                      {
+                        "id": "unit",
+                        "value": "reqps"
+                      }
+                    ]
+                  },
+                  {
+                    "matcher": {
+                      "id": "byName",
+                      "options": ""
+                    },
+                    "properties": []
+                  },
+                  {
+                    "matcher": {
+                      "id": "byName",
+                      "scope": "series",
+                      "options": "response_time_step_p90_avg {host=\"DESKTOP-QQQOPDE\", request=\"ALL\", simulation=\"PerfTestSimulation_rolling\", status=\"all\"}"
+                    },
+                    "properties": [
+                      {
+                        "id": "unit",
+                        "value": "ms"
+                      }
+                    ]
+                  },
+                  {
+                    "matcher": {
+                      "id": "byName",
+                      "scope": "series",
+                      "options": "Error Count {host=\"DESKTOP-QQQOPDE\", simulation=\"PerfTestSimulation\"}"
+                    },
+                    "properties": [
+                      {
+                        "id": "custom.axisPlacement",
+                        "value": "right"
+                      }
+                    ]
+                  },
+                  {
+                    "matcher": {
+                      "id": "byName",
+                      "scope": "series",
+                      "options": "Total Throughput (RPS) {simulation=\"PerfTestSimulation\"}"
+                    },
+                    "properties": [
+                      {
+                        "id": "displayName",
+                        "value": "Total Throughput (RPS)"
+                      }
+                    ]
+                  },
+                  {
+                    "matcher": {
+                      "id": "byName",
+                      "scope": "series",
+                      "options": "response_time_step_p90_avg {host=\"DESKTOP-QQQOPDE\", request=\"ALL\", simulation=\"PerfTestSimulation_rolling\", status=\"all\"}"
+                    },
+                    "properties": [
+                      {
+                        "id": "displayName",
+                        "value": "pct90 Response Time"
+                      }
+                    ]
+                  },
+                  {
+                    "matcher": {
+                      "id": "byName",
+                      "options": "pct90 Response Time"
+                    },
+                    "properties": [
+                      {
+                        "id": "color",
+                        "value": {
+                          "fixedColor": "dark-blue",
+                          "mode": "fixed"
+                        }
+                      }
+                    ]
+                  }
+                ]
+              }
+            }
+          }
+        }
+      }
+    },
+    "layout": {
+      "kind": "RowsLayout",
+      "spec": {
+        "rows": [
+          {
+            "kind": "RowsLayoutRow",
+            "spec": {
+              "title": "",
+              "collapse": false,
+              "hideHeader": true,
+              "layout": {
+                "kind": "GridLayout",
+                "spec": {
+                  "items": [
+                    {
+                      "kind": "GridLayoutItem",
+                      "spec": {
+                        "x": 0,
+                        "y": 0,
+                        "width": 24,
+                        "height": 6,
+                        "element": {
+                          "kind": "ElementReference",
+                          "name": "panel-1425"
+                        }
+                      }
+                    },
+                    {
+                      "kind": "GridLayoutItem",
+                      "spec": {
+                        "x": 0,
+                        "y": 6,
+                        "width": 24,
+                        "height": 12,
+                        "element": {
+                          "kind": "ElementReference",
+                          "name": "panel-1426"
+                        }
+                      }
+                    },
+                    {
+                      "kind": "GridLayoutItem",
+                      "spec": {
+                        "x": 0,
+                        "y": 18,
+                        "width": 24,
+                        "height": 11,
+                        "element": {
+                          "kind": "ElementReference",
+                          "name": "panel-1432"
+                        },
+                        "repeat": {
+                          "mode": "variable",
+                          "value": "simulation",
+                          "direction": "h",
+                          "maxPerRow": 3
+                        }
+                      }
+                    },
+                    {
+                      "kind": "GridLayoutItem",
+                      "spec": {
+                        "x": 0,
+                        "y": 29,
+                        "width": 24,
+                        "height": 12,
+                        "element": {
+                          "kind": "ElementReference",
+                          "name": "panel-1440"
+                        }
+                      }
+                    },
+                    {
+                      "kind": "GridLayoutItem",
+                      "spec": {
+                        "x": 0,
+                        "y": 41,
+                        "width": 24,
+                        "height": 12,
+                        "element": {
+                          "kind": "ElementReference",
+                          "name": "panel-1441"
+                        }
+                      }
+                    },
+                    {
+                      "kind": "GridLayoutItem",
+                      "spec": {
+                        "x": 0,
+                        "y": 53,
+                        "width": 24,
+                        "height": 18,
+                        "element": {
+                          "kind": "ElementReference",
+                          "name": "panel-1428"
+                        }
+                      }
+                    },
+                    {
+                      "kind": "GridLayoutItem",
+                      "spec": {
+                        "x": 0,
+                        "y": 71,
+                        "width": 24,
+                        "height": 9,
+                        "element": {
+                          "kind": "ElementReference",
+                          "name": "panel-1431"
+                        },
+                        "repeat": {
+                          "mode": "variable",
+                          "value": "simulation",
+                          "direction": "h",
+                          "maxPerRow": 3
+                        }
+                      }
+                    },
+                    {
+                      "kind": "GridLayoutItem",
+                      "spec": {
+                        "x": 0,
+                        "y": 80,
+                        "width": 24,
+                        "height": 9,
+                        "element": {
+                          "kind": "ElementReference",
+                          "name": "panel-1434"
+                        }
+                      }
+                    },
+                    {
+                      "kind": "GridLayoutItem",
+                      "spec": {
+                        "x": 0,
+                        "y": 89,
+                        "width": 24,
+                        "height": 12,
+                        "element": {
+                          "kind": "ElementReference",
+                          "name": "panel-1436"
+                        }
+                      }
+                    }
+                  ]
+                }
+              }
+            }
+          }
+        ]
+      }
+    },
+    "links": [],
+    "liveNow": false,
+    "preload": false,
+    "tags": [],
+    "timeSettings": {
+      "timezone": "browser",
+      "from": "now-15m",
+      "to": "now",
+      "autoRefresh": "",
+      "autoRefreshIntervals": [
+        "10s",
+        "30s",
+        "1m",
+        "5m",
+        "15m",
+        "30m",
+        "1h",
+        "2h",
+        "1d"
+      ],
+      "hideTimepicker": false,
+      "fiscalYearStartMonth": 0
+    },
+    "title": "Gatling Report",
+    "variables": [
+      {
+        "kind": "DatasourceVariable",
+        "spec": {
+          "name": "ds",
+          "pluginId": "influxdb",
+          "refresh": "onDashboardLoad",
+          "regex": "/.*Gatling.*/i",
+          "current": {
+            "text": "Gatling_TCP",
+            "value": "Gatling_TCP"
+          },
+          "options": [],
+          "multi": false,
+          "includeAll": false,
+          "label": "data source",
+          "hide": "dontHide",
+          "skipUrlSync": false,
+          "allowCustomValue": true
+        }
+      },
+      {
+        "kind": "QueryVariable",
+        "spec": {
+          "name": "archive",
+          "current": {
+            "text": "",
+            "value": ""
+          },
+          "label": "Retention policy",
+          "hide": "hideVariable",
+          "refresh": "onDashboardLoad",
+          "skipUrlSync": false,
+          "query": {
+            "kind": "DataQuery",
+            "group": "influxdb",
+            "version": "v0",
+            "datasource": {
+              "name": "$ds"
+            },
+            "spec": {
+              "__legacyStringValue": "SHOW RETENTION POLICIES"
+            }
+          },
+          "regex": "",
+          "regexApplyTo": "value",
+          "sort": "disabled",
+          "definition": "SHOW RETENTION POLICIES",
+          "options": [],
+          "multi": false,
+          "includeAll": false,
+          "allowCustomValue": true
+        }
+      },
+      {
+        "kind": "IntervalVariable",
+        "spec": {
+          "name": "g",
+          "query": "1s,2s,5s,10s,30s,1m,2m,10m,30m,1h,6h,12h,1d,7d,14d,30d",
+          "current": {
+            "text": "1s",
+            "value": "1s"
+          },
+          "options": [
+            {
+              "selected": false,
+              "text": "auto",
+              "value": "$__auto_interval_g"
+            },
+            {
+              "selected": true,
+              "text": "1s",
+              "value": "1s"
+            },
+            {
+              "selected": false,
+              "text": "2s",
+              "value": "2s"
+            },
+            {
+              "selected": false,
+              "text": "5s",
+              "value": "5s"
+            },
+            {
+              "selected": false,
+              "text": "10s",
+              "value": "10s"
+            },
+            {
+              "selected": false,
+              "text": "30s",
+              "value": "30s"
+            },
+            {
+              "selected": false,
+              "text": "1m",
+              "value": "1m"
+            },
+            {
+              "selected": false,
+              "text": "2m",
+              "value": "2m"
+            },
+            {
+              "selected": false,
+              "text": "10m",
+              "value": "10m"
+            },
+            {
+              "selected": false,
+              "text": "30m",
+              "value": "30m"
+            },
+            {
+              "selected": false,
+              "text": "1h",
+              "value": "1h"
+            },
+            {
+              "selected": false,
+              "text": "6h",
+              "value": "6h"
+            },
+            {
+              "selected": false,
+              "text": "12h",
+              "value": "12h"
+            },
+            {
+              "selected": false,
+              "text": "1d",
+              "value": "1d"
+            },
+            {
+              "selected": false,
+              "text": "7d",
+              "value": "7d"
+            },
+            {
+              "selected": false,
+              "text": "14d",
+              "value": "14d"
+            },
+            {
+              "selected": false,
+              "text": "30d",
+              "value": "30d"
+            }
+          ],
+          "auto": true,
+          "auto_min": "1s",
+          "auto_count": 500,
+          "refresh": "onTimeRangeChanged",
+          "label": "granularity",
+          "hide": "dontHide",
+          "skipUrlSync": false
+        }
+      },
+      {
+        "kind": "CustomVariable",
+        "spec": {
+          "name": "duration_1",
+          "query": "800",
+          "current": {
+            "text": "40",
+            "value": "40"
+          },
+          "options": [
+            {
+              "selected": false,
+              "text": "800",
+              "value": "800"
+            }
+          ],
+          "multi": false,
+          "includeAll": false,
+          "hide": "hideVariable",
+          "skipUrlSync": false,
+          "allowCustomValue": true,
+          "valuesFormat": "csv"
+        }
+      },
+      {
+        "kind": "CustomVariable",
+        "spec": {
+          "name": "duration_2",
+          "query": "1200",
+          "current": {
+            "text": "100",
+            "value": "100"
+          },
+          "options": [
+            {
+              "selected": false,
+              "text": "1200",
+              "value": "1200"
+            }
+          ],
+          "multi": false,
+          "includeAll": false,
+          "hide": "hideVariable",
+          "skipUrlSync": false,
+          "allowCustomValue": true,
+          "valuesFormat": "csv"
+        }
+      },
+      {
+        "kind": "QueryVariable",
+        "spec": {
+          "name": "simulation",
+          "current": {
+            "text": "",
+            "value": ""
+          },
+          "label": "Simulation",
+          "hide": "dontHide",
+          "refresh": "onTimeRangeChanged",
+          "skipUrlSync": false,
+          "query": {
+            "kind": "DataQuery",
+            "group": "influxdb",
+            "version": "v0",
+            "datasource": {
+              "name": "$ds"
+            },
+            "spec": {
+              "__legacyStringValue": "SELECT DISTINCT(\"simulation\") FROM (\n    SELECT \"simulation\",\"mean\" \n    FROM \"$archive\".\"gatling\" \n    WHERE $timeFilter)\n--SELECT \"simulation\" FROM (SELECT last(\"mean\") from \"gatling\" WHERE $timeFilter GROUP BY \"simulation\")"
+            }
+          },
+          "regex": "",
+          "regexApplyTo": "value",
+          "sort": "alphabeticalAsc",
+          "definition": "SELECT DISTINCT(\"simulation\") FROM (\n    SELECT \"simulation\",\"mean\" \n    FROM \"$archive\".\"gatling\" \n    WHERE $timeFilter)\n--SELECT \"simulation\" FROM (SELECT last(\"mean\") from \"gatling\" WHERE $timeFilter GROUP BY \"simulation\")",
+          "options": [],
+          "multi": false,
+          "includeAll": false,
+          "allowCustomValue": true
+        }
+      },
+      {
+        "kind": "QueryVariable",
+        "spec": {
+          "name": "run",
+          "current": {
+            "text": "",
+            "value": ""
+          },
+          "label": "Run",
+          "hide": "dontHide",
+          "refresh": "onTimeRangeChanged",
+          "skipUrlSync": false,
+          "query": {
+            "kind": "DataQuery",
+            "group": "influxdb",
+            "version": "v0",
+            "datasource": {
+              "name": "$ds"
+            },
+            "spec": {
+              "__legacyStringValue": "SELECT \"run\" FROM (SELECT last(\"mean\") from \"$archive\".\"gatling\" WHERE \"run\" <> '' AND \"simulation\" =~ /^$simulation$/ AND $timeFilter GROUP BY \"run\")"
+            }
+          },
+          "regex": "",
+          "regexApplyTo": "value",
+          "sort": "alphabeticalDesc",
+          "definition": "SELECT \"run\" FROM (SELECT last(\"mean\") from \"$archive\".\"gatling\" WHERE \"run\" <> '' AND \"simulation\" =~ /^$simulation$/ AND $timeFilter GROUP BY \"run\")",
+          "options": [],
+          "multi": false,
+          "includeAll": false,
+          "allowCustomValue": true
+        }
+      },
+      {
+        "kind": "QueryVariable",
+        "spec": {
+          "name": "host",
+          "current": {
+            "text": "",
+            "value": ""
+          },
+          "label": "Load Station",
+          "hide": "dontHide",
+          "refresh": "onTimeRangeChanged",
+          "skipUrlSync": false,
+          "query": {
+            "kind": "DataQuery",
+            "group": "influxdb",
+            "version": "v0",
+            "datasource": {
+              "name": "$ds"
+            },
+            "spec": {
+              "__legacyStringValue": "SELECT \"host\" FROM \n(SELECT last(\"mean\") from \"$archive\".\"gatling\" WHERE \"run\" =~ /^${run:regex}$/ AND \"simulation\" =~ /^${simulation:regex}$/ AND $timeFilter GROUP BY \"host\")"
+            }
+          },
+          "regex": "",
+          "regexApplyTo": "value",
+          "sort": "alphabeticalAsc",
+          "definition": "SELECT \"host\" FROM \n(SELECT last(\"mean\") from \"$archive\".\"gatling\" WHERE \"run\" =~ /^${run:regex}$/ AND \"simulation\" =~ /^${simulation:regex}$/ AND $timeFilter GROUP BY \"host\")",
+          "options": [],
+          "multi": true,
+          "includeAll": true,
+          "allowCustomValue": true
+        }
+      },
+      {
+        "kind": "QueryVariable",
+        "spec": {
+          "name": "group1",
+          "current": {
+            "text": "",
+            "value": ""
+          },
+          "label": "Group (level 1)",
+          "hide": "dontHide",
+          "refresh": "onTimeRangeChanged",
+          "skipUrlSync": false,
+          "query": {
+            "kind": "DataQuery",
+            "group": "influxdb",
+            "version": "v0",
+            "datasource": {
+              "name": "$ds"
+            },
+            "spec": {
+              "__legacyStringValue": "SELECT \"group1\" FROM (select last(\"mean\") from \"$archive\".gatling where (\"run\" =~ /^$run$/ OR \"run\" = '') AND (\"host\" =~ /^$host$/ OR \"host\" = '') AND \"simulation\" = '$simulation' AND \"group\"='1' AND $timeFilter GROUP BY \"group1\")"
+            }
+          },
+          "regex": "",
+          "regexApplyTo": "value",
+          "sort": "alphabeticalAsc",
+          "definition": "SELECT \"group1\" FROM (select last(\"mean\") from \"$archive\".gatling where (\"run\" =~ /^$run$/ OR \"run\" = '') AND (\"host\" =~ /^$host$/ OR \"host\" = '') AND \"simulation\" = '$simulation' AND \"group\"='1' AND $timeFilter GROUP BY \"group1\")",
+          "options": [],
+          "multi": true,
+          "includeAll": true,
+          "allowCustomValue": true
+        }
+      },
+      {
+        "kind": "QueryVariable",
+        "spec": {
+          "name": "group2",
+          "current": {
+            "text": "",
+            "value": ""
+          },
+          "label": "Group (level 2)",
+          "hide": "dontHide",
+          "refresh": "onTimeRangeChanged",
+          "skipUrlSync": false,
+          "query": {
+            "kind": "DataQuery",
+            "group": "influxdb",
+            "version": "v0",
+            "datasource": {
+              "name": "$ds"
+            },
+            "spec": {
+              "__legacyStringValue": "SELECT \"group2\" FROM (select last(\"mean\") from \"$archive\".gatling where (\"run\" =~ /^$run$/ OR \"run\" = '') AND (\"host\" =~ /^$host$/ OR \"host\" = '') AND \"simulation\" =~ /^$simulation$/ AND \"group1\" =~ /^$group1$/ AND \"group\"='2' AND $timeFilter GROUP BY \"group2\")"
+            }
+          },
+          "regex": "",
+          "regexApplyTo": "value",
+          "sort": "alphabeticalAsc",
+          "definition": "SELECT \"group2\" FROM (select last(\"mean\") from \"$archive\".gatling where (\"run\" =~ /^$run$/ OR \"run\" = '') AND (\"host\" =~ /^$host$/ OR \"host\" = '') AND \"simulation\" =~ /^$simulation$/ AND \"group1\" =~ /^$group1$/ AND \"group\"='2' AND $timeFilter GROUP BY \"group2\")",
+          "options": [],
+          "multi": true,
+          "includeAll": true,
+          "allowCustomValue": true
+        }
+      },
+      {
+        "kind": "QueryVariable",
+        "spec": {
+          "name": "group3",
+          "current": {
+            "text": "",
+            "value": ""
+          },
+          "label": "Group (level 3)",
+          "hide": "dontHide",
+          "refresh": "onTimeRangeChanged",
+          "skipUrlSync": false,
+          "query": {
+            "kind": "DataQuery",
+            "group": "influxdb",
+            "version": "v0",
+            "datasource": {
+              "name": "$ds"
+            },
+            "spec": {
+              "__legacyStringValue": "SELECT \"group3\" FROM (select last(\"mean\") from \"$archive\".gatling where (\"run\" =~ /^${run:regex}$/ OR \"run\" = '') AND (\"host\" =~ /^${host:regex}$/ OR \"host\" = '') AND \"simulation\" =~ /^${simulation:regex}$/ AND \"group1\" =~ /^${group1:regex}$/ AND \"group2\" =~ /^${group2:regex}$/ AND \"group\"='3' AND $timeFilter GROUP BY \"group3\")"
+            }
+          },
+          "regex": "",
+          "regexApplyTo": "value",
+          "sort": "alphabeticalAsc",
+          "definition": "SELECT \"group3\" FROM (select last(\"mean\") from \"$archive\".gatling where (\"run\" =~ /^${run:regex}$/ OR \"run\" = '') AND (\"host\" =~ /^${host:regex}$/ OR \"host\" = '') AND \"simulation\" =~ /^${simulation:regex}$/ AND \"group1\" =~ /^${group1:regex}$/ AND \"group2\" =~ /^${group2:regex}$/ AND \"group\"='3' AND $timeFilter GROUP BY \"group3\")",
+          "options": [],
+          "multi": true,
+          "includeAll": true,
+          "allowCustomValue": true
+        }
+      },
+      {
+        "kind": "QueryVariable",
+        "spec": {
+          "name": "request",
+          "current": {
+            "text": "",
+            "value": ""
+          },
+          "label": "Request",
+          "hide": "dontHide",
+          "refresh": "onTimeRangeChanged",
+          "skipUrlSync": false,
+          "query": {
+            "kind": "DataQuery",
+            "group": "influxdb",
+            "version": "v0",
+            "datasource": {
+              "name": "$ds"
+            },
+            "spec": {
+              "__legacyStringValue": "SELECT \"request\" FROM (select last(\"mean\") from \"$archive\".gatling where (\"run\" =~ /^${run:regex}$/ OR \"run\" = '') AND (\"host\" =~ /^${host:regex}$/ OR \"host\" = '') AND \"simulation\" =~ /^${simulation:regex}$/ AND \"request\" != 'allRequests' AND $timeFilter AND (\"group\" = '0' OR \"group\" = '' OR (\"group\" = '1' AND \"group1\" =~ /^${group1:regex}$/) OR (\"group\" = '2' AND \"group1\" =~ /^${group1:regex}$/ AND \"group2\" =~ /^${group2:regex}$/) OR (\"group\" <> '' AND \"group\" <> '1' AND \"group\" <> '2' AND \"group1\" =~ /^${group1:regex}$/ AND \"group2\" =~ /^${group2:regex}$/ AND \"group3\" =~ /^${group3:regex}$/) )  GROUP BY \"request\") "
+            }
+          },
+          "regex": "",
+          "regexApplyTo": "value",
+          "sort": "alphabeticalAsc",
+          "definition": "SELECT \"request\" FROM (select last(\"mean\") from \"$archive\".gatling where (\"run\" =~ /^${run:regex}$/ OR \"run\" = '') AND (\"host\" =~ /^${host:regex}$/ OR \"host\" = '') AND \"simulation\" =~ /^${simulation:regex}$/ AND \"request\" != 'allRequests' AND $timeFilter AND (\"group\" = '0' OR \"group\" = '' OR (\"group\" = '1' AND \"group1\" =~ /^${group1:regex}$/) OR (\"group\" = '2' AND \"group1\" =~ /^${group1:regex}$/ AND \"group2\" =~ /^${group2:regex}$/) OR (\"group\" <> '' AND \"group\" <> '1' AND \"group\" <> '2' AND \"group1\" =~ /^${group1:regex}$/ AND \"group2\" =~ /^${group2:regex}$/ AND \"group3\" =~ /^${group3:regex}$/) )  GROUP BY \"request\") ",
+          "options": [],
+          "multi": true,
+          "includeAll": true,
+          "allowCustomValue": true
+        }
+      },
+      {
+        "kind": "QueryVariable",
+        "spec": {
+          "name": "scenario",
+          "current": {
+            "text": "",
+            "value": ""
+          },
+          "label": "User (Scenario)",
+          "hide": "dontHide",
+          "refresh": "onTimeRangeChanged",
+          "skipUrlSync": false,
+          "query": {
+            "kind": "DataQuery",
+            "group": "influxdb",
+            "version": "v0",
+            "datasource": {
+              "name": "$ds"
+            },
+            "spec": {
+              "__legacyStringValue": "SHOW TAG VALUES  FROM \"gatling.users\" WITH KEY = \"request\" where (\"run\" =~ /^${run:regex}$/ OR \"run\" = '') AND (\"host\" =~ /^${host:regex}$/ OR \"host\" = '')  AND \"simulation\" =~ /^${simulation:regex}$/ AND \"request\" != 'allUsers' AND $timeFilter"
+            }
+          },
+          "regex": "",
+          "regexApplyTo": "value",
+          "sort": "alphabeticalAsc",
+          "definition": "SHOW TAG VALUES  FROM \"gatling.users\" WITH KEY = \"request\" where (\"run\" =~ /^${run:regex}$/ OR \"run\" = '') AND (\"host\" =~ /^${host:regex}$/ OR \"host\" = '')  AND \"simulation\" =~ /^${simulation:regex}$/ AND \"request\" != 'allUsers' AND $timeFilter",
+          "options": [],
+          "multi": true,
+          "includeAll": true,
+          "allowCustomValue": true
+        }
+      },
+      {
+        "kind": "QueryVariable",
+        "spec": {
+          "name": "Total",
+          "current": {
+            "text": "",
+            "value": ""
+          },
+          "label": "Total",
+          "hide": "hideVariable",
+          "refresh": "onTimeRangeChanged",
+          "skipUrlSync": false,
+          "query": {
+            "kind": "DataQuery",
+            "group": "influxdb",
+            "version": "v0",
+            "datasource": {
+              "name": "$ds"
+            },
+            "spec": {
+              "__legacyStringValue": "SELECT max(\"X\") FROM (SELECT sum(\"count\") as \"X\" FROM \"$archive\".\"gatling\" WHERE (\"simulation\" = '$simulation') and $timeFilter and \"status\" = 'all' and \"request\" = 'allRequests' and (\"run\" =~ /^$run$/ or \"run\" = '') AND (\"host\" =~ /^$host$/ or \"host\"='')), (SELECT last(\"count\")-last(\"count\")+0.00001 as \"X\" FROM \"$archive\".gatling)\n\n-- default value is 0.00001"
+            }
+          },
+          "regex": "",
+          "regexApplyTo": "value",
+          "sort": "alphabeticalAsc",
+          "definition": "SELECT max(\"X\") FROM (SELECT sum(\"count\") as \"X\" FROM \"$archive\".\"gatling\" WHERE (\"simulation\" = '$simulation') and $timeFilter and \"status\" = 'all' and \"request\" = 'allRequests' and (\"run\" =~ /^$run$/ or \"run\" = '') AND (\"host\" =~ /^$host$/ or \"host\"='')), (SELECT last(\"count\")-last(\"count\")+0.00001 as \"X\" FROM \"$archive\".gatling)\n\n-- default value is 0.00001",
+          "options": [],
+          "multi": false,
+          "includeAll": false,
+          "allowCustomValue": true
+        }
+      },
+      {
+        "kind": "QueryVariable",
+        "spec": {
+          "name": "gatlingWriteDuration",
+          "current": {
+            "text": "",
+            "value": ""
+          },
+          "label": "gatlingWriteDuration",
+          "hide": "hideVariable",
+          "refresh": "onTimeRangeChanged",
+          "skipUrlSync": false,
+          "query": {
+            "kind": "DataQuery",
+            "group": "influxdb",
+            "version": "v0",
+            "datasource": {
+              "name": "$ds"
+            },
+            "spec": {
+              "__legacyStringValue": "SELECT max(\"X\") FROM (SELECT percentile(\"E\", 90) as \"X\" FROM (SELECT ELAPSED(\"count\", 1s) as \"E\" FROM \"$archive\".\"gatling\" WHERE (\"simulation\" =~ /^$simulation$/) and $timeFilter and \"status\" = 'all' and \"request\" = 'allRequests' and (\"run\" =~ /^$run$/ or \"run\" = '') AND (\"host\" =~ /^$host$/ or \"host\"=''))), (SELECT last(\"count\")-last(\"count\")+0 as \"X\" FROM \"$archive\".gatling)\n\n-- default value of gatlingWriteDuration = 0"
+            }
+          },
+          "regex": "",
+          "regexApplyTo": "value",
+          "sort": "alphabeticalAsc",
+          "definition": "SELECT max(\"X\") FROM (SELECT percentile(\"E\", 90) as \"X\" FROM (SELECT ELAPSED(\"count\", 1s) as \"E\" FROM \"$archive\".\"gatling\" WHERE (\"simulation\" =~ /^$simulation$/) and $timeFilter and \"status\" = 'all' and \"request\" = 'allRequests' and (\"run\" =~ /^$run$/ or \"run\" = '') AND (\"host\" =~ /^$host$/ or \"host\"=''))), (SELECT last(\"count\")-last(\"count\")+0 as \"X\" FROM \"$archive\".gatling)\n\n-- default value of gatlingWriteDuration = 0",
+          "options": [],
+          "multi": false,
+          "includeAll": false,
+          "allowCustomValue": true
+        }
+      },
+      {
+        "kind": "QueryVariable",
+        "spec": {
+          "name": "testDuration",
+          "current": {
+            "text": "",
+            "value": ""
+          },
+          "label": "testDuration",
+          "hide": "hideVariable",
+          "refresh": "onTimeRangeChanged",
+          "skipUrlSync": false,
+          "query": {
+            "kind": "DataQuery",
+            "group": "influxdb",
+            "version": "v0",
+            "datasource": {
+              "name": "$ds"
+            },
+            "spec": {
+              "__legacyStringValue": "SELECT max(\"E2\")+$gatlingWriteDuration FROM (SELECT sum(\"E\") as \"E2\" FROM (select ELAPSED(\"count\", 1s) as \"E\" FROM \"$archive\".\"gatling\" WHERE (\"simulation\" =~ /^$simulation$/) and $timeFilter and \"status\" = 'all' and \"request\" = 'allRequests' and (\"run\" =~ /^$run$/ or \"run\" = '') AND (\"host\" =~ /^$host$/ or \"host\"='') GROUP BY \"host\") GROUP BY \"host\"), (SELECT last(\"count\")-last(\"count\")+0    as \"E2\" FROM \"$archive\".gatling)\n\n-- default value: 0"
+            }
+          },
+          "regex": "",
+          "regexApplyTo": "value",
+          "sort": "alphabeticalAsc",
+          "definition": "SELECT max(\"E2\")+$gatlingWriteDuration FROM (SELECT sum(\"E\") as \"E2\" FROM (select ELAPSED(\"count\", 1s) as \"E\" FROM \"$archive\".\"gatling\" WHERE (\"simulation\" =~ /^$simulation$/) and $timeFilter and \"status\" = 'all' and \"request\" = 'allRequests' and (\"run\" =~ /^$run$/ or \"run\" = '') AND (\"host\" =~ /^$host$/ or \"host\"='') GROUP BY \"host\") GROUP BY \"host\"), (SELECT last(\"count\")-last(\"count\")+0    as \"E2\" FROM \"$archive\".gatling)\n\n-- default value: 0",
+          "options": [],
+          "multi": false,
+          "includeAll": false,
+          "allowCustomValue": true
+        }
+      },
+      {
+        "kind": "QueryVariable",
+        "spec": {
+          "name": "testDurationX2",
+          "current": {
+            "text": "",
+            "value": ""
+          },
+          "label": "testDurationX2",
+          "hide": "hideVariable",
+          "refresh": "onTimeRangeChanged",
+          "skipUrlSync": false,
+          "query": {
+            "kind": "DataQuery",
+            "group": "influxdb",
+            "version": "v0",
+            "datasource": {
+              "name": "$ds"
+            },
+            "spec": {
+              "__legacyStringValue": "SELECT ((\"zero\" + $testDuration) * 2) FROM (SELECT last(\"count\")-last(\"count\") as \"zero\" from \"$archive\".\"gatling\")\n\n-- default value: 0"
+            }
+          },
+          "regex": "",
+          "regexApplyTo": "value",
+          "sort": "alphabeticalAsc",
+          "definition": "SELECT ((\"zero\" + $testDuration) * 2) FROM (SELECT last(\"count\")-last(\"count\") as \"zero\" from \"$archive\".\"gatling\")\n\n-- default value: 0",
+          "options": [],
+          "multi": false,
+          "includeAll": false,
+          "allowCustomValue": true
+        }
+      }
+    ]
+  }
+}
